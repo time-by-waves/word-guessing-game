@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const fetch = require('node-fetch'); // Import node-fetch for API calls
 
 const app = express();
 const server = http.createServer(app);
@@ -17,47 +16,10 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // Game state storage
 const games = new Map();
 
-// Generate a random word using the API
+// Generate a random word
 async function getRandomWord() {
-  try {
-    const response = await fetch(
-      'https://random-words-api.vercel.app/word'
-    );
-    const data = await response.json();
-
-    // Extract the word from the response and convert to lowercase
-    const word = data.word.toLowerCase();
-    return word;
-  } catch (error) {
-    console.error('Error fetching random word:', error.message);
-    // Fallback words in case the API fails
-    const fallbackWords = [
-      'abandon', 'ability', 'absence', 'academy', 'account',
-      'achieve', 'acquire', 'address', 'advance', 'adventure',
-      'balance', 'battery', 'bedroom', 'benefit', 'bicycle',
-      'cabinet', 'capture', 'careful', 'center', 'century',
-      'dancing', 'daughter', 'deliver', 'desktop', 'develop',
-      'eastern', 'economy', 'education', 'element', 'evening',
-      'factory', 'failure', 'fashion', 'feature', 'finance',
-      'gallery', 'garbage', 'general', 'gesture', 'glitter',
-      'habitat', 'harvest', 'healthy', 'history', 'holiday',
-      'imagine', 'improve', 'include', 'initial', 'instead',
-      'jacket', 'journey', 'justice', 'kitchen', 'knowledge',
-      'language', 'library', 'machine', 'maximum', 'message',
-      'natural', 'network', 'nothing', 'nuclear', 'observe',
-      'package', 'parking', 'pattern', 'picture', 'plastic',
-      'quality', 'quarter', 'question', 'quickly', 'railway',
-      'realize', 'receive', 'recover', 'release', 'replace',
-      'science', 'scratch', 'section', 'service', 'session',
-      'teacher', 'theatre', 'therapy', 'thought', 'tonight',
-      'uniform', 'unknown', 'unusual', 'upgrade', 'utility',
-      'vacation', 'vehicle', 'village', 'vitamin', 'warning',
-      'weather', 'website', 'welcome', 'whisper', 'written'
-    ];
-    return fallbackWords[
-      Math.floor(Math.random() * fallbackWords.length)
-    ];
-  }
+  const { default: randomWords } = await import('random-words');
+  return randomWords();
 }
 
 // Start a new game

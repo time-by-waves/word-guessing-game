@@ -1,0 +1,42 @@
+name: Node.js CI for Word Guessing Game
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm' # Enable caching for npm dependencies
+
+      - name: Install dependencies
+        run: npm ci # Use 'ci' for cleaner, faster, and more reliable builds
+
+      # Optional: Add a linting step if you have a lint script in package.json
+      # To enable, uncomment the following lines and ensure 'npm run lint' is defined.
+      # - name: Run linter
+      #   run: npm run lint --if-present
+
+      # Optional: Add a test step if you have a test script in package.json
+      # To enable, uncomment the following lines and ensure 'npm test' is defined.
+      # - name: Run tests
+      #   run: npm test --if-present
+
+      - name: Build application
+        run: npm run build --if-present
