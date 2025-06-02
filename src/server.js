@@ -17,27 +17,64 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 const games = new Map();
 
 // Generate a random word
-async function getRandomWord() {
-  const { default: randomWords } = await import('random-words');
-  return randomWords();
+async function getRandomWord(options = {}) {
+  const { generate } = await import('random-words');
+  const defaultOptions = {
+    exactly: 1,
+    wordsPerString: 1,
+    minLength: 4,
+    maxLength: 8
+  };
+
+  const wordOptions = { ...defaultOptions, ...options };
+  const words = generate(wordOptions);
+  return words[0];
+}
+
+// Get word count for difficulty info
+async function getWordCount(minLength, maxLength) {
+  const { count } = await import('random-words');
+  return count({ min: minLength, max: maxLength });
 }
 
 // Start a new game
 app.post('/api/game/start', async (req, res) => {
   try {
     const gameId = Date.now().toString();
-    const targetWord = await getRandomWord();
+    const { difficulty = 'medium' } = req.body;
+
+    let lengthOptions;
+    switch (difficulty) {
+      case 'easy':
+        lengthOptions = { minLength: 3, maxLength: 5 };
+        break;
+      case 'hard':
+        lengthOptions = { minLength: 7, maxLength: 12 };
+        break;
+      default:
+        lengthOptions = { minLength: 4, maxLength: 8 };
+    }
+
+    const targetWord = await getRandomWord(lengthOptions);
+    const availableWords = await getWordCount(
+      lengthOptions.minLength,
+      lengthOptions.maxLength
+    );
 
     games.set(gameId, {
       targetWord: targetWord,
       guesses: [],
       isComplete: false,
-      startTime: new Date()
+      startTime: new Date(),
+      difficulty: difficulty
     });
 
     res.json({
       gameId: gameId,
-      message: 'New game started! Start guessing words.'
+      message: 'New game started! Start guessing words.',
+      difficulty: difficulty,
+      wordLength: targetWord.length,
+      availableWords: availableWords
     });
   } catch (error) {
     res.status(500).json({

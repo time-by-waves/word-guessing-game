@@ -215,15 +215,6 @@ class WordGuessingGame {
             messageEl.className = 'sort-message';
             messageEl.textContent =
                 'Complete the game to sort by closeness';
-            messageEl.style.cssText = `
-                padding: 0.5rem;
-                background: #fef5e7;
-                color: #744210;
-                border-radius: 4px;
-                margin-bottom: 1rem;
-                text-align: center;
-                font-style: italic;
-            `;
             this.guessList.appendChild(messageEl);
         }
 
