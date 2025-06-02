@@ -16,9 +16,15 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // Game state storage
 const games = new Map();
 
+// Cache for the random-words module
+let randomWordsModule = null;
+
 // Generate a random word
 async function getRandomWord(options = {}) {
-  const { generate } = await import('random-words');
+  if (!randomWordsModule) {
+    randomWordsModule = await import('random-words');
+  }
+  const { generate } = randomWordsModule;
   const defaultOptions = {
     exactly: 1,
     wordsPerString: 1,
