@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guessing Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Word Guessing Game</h1>
+        <p class="instructions">
+            Guess the target word! Your guesses will be ordered by how close
+            they are alphabetically to the target word.
+        </p>
+
+        <div class="game-controls">
+            <button id="newGameBtn" class="btn btn-primary">
+                Start New Game
+            </button>
+        </div>
+
+        <div id="gameArea" class="game-area hidden">
+            <div class="input-section">
+                <input type="text" id="guessInput" placeholder="Enter your guess..." maxlength="20">
+                <button id="submitGuess" class="btn btn-secondary">
+                    Submit Guess
+                </button>
+            </div>
+
+            <div id="message" class="message"></div>
+            <div id="hint" class="hint"></div>
+
+            <div class="guess-history">
+                <div class="history-header">
+                    <h3 id="historyTitle">
+                        Guess History (Newest First)
+                    </h3>
+                    <button id="sortToggle" class="btn btn-toggle">
+                        Sort by Closeness
+                    </button>
+                </div>
+                <div id="guessList" class="guess-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
