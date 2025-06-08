@@ -82,6 +82,9 @@
     "testMatch": [
       "**/__tests__/**/*.js",
       "**/?(*.)+(spec|test).js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/e2e/"
     ]
   },
   "lint-staged": {
