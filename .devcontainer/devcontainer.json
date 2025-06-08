@@ -58,10 +58,7 @@
       }
     }
   },
-  "forwardPorts": [
-    3000,
-    9229
-  ],
+  "forwardPorts": [3000, 9229],
   "portsAttributes": {
     "3000": {
       "label": "Application",

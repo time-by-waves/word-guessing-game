@@ -120,16 +120,19 @@ BINARYLANE_HOST: "203.0.113.42"
 ## Troubleshooting
 
 ### Secret not found errors
+
 - Check secret name matches exactly (case-sensitive)
 - Ensure secret is in the correct repository
 - Verify you're using the correct environment
 
 ### Authentication failures
+
 - Regenerate passwords/tokens
 - Check for special characters that need escaping
 - Verify credentials work locally first
 
 ### SSH connection issues
+
 - Ensure public key is in server's authorized_keys
 - Check SSH key format (should start with ssh-ed25519 or ssh-rsa)
 - Verify server allows key-based authentication

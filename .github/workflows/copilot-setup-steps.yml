@@ -2,9 +2,9 @@ name: Node.js CI for Word Guessing Game
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build_and_test:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm' # Enable caching for npm dependencies
+          cache: "npm" # Enable caching for npm dependencies
 
       - name: Install dependencies
         run: npm ci # Use 'ci' for cleaner, faster, and more reliable builds

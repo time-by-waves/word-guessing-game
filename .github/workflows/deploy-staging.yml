@@ -2,13 +2,13 @@ name: Deploy to Staging
 
 on:
   push:
-    branches: [ staging ]
+    branches: [staging]
   workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: word-guessing-game-staging
-  AZURE_WEBAPP_PACKAGE_PATH: '.'
-  NODE_VERSION: '20.x'
+  AZURE_WEBAPP_PACKAGE_PATH: "."
+  NODE_VERSION: "20.x"
 
 jobs:
   build-and-deploy:
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci

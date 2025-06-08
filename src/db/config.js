@@ -1,10 +1,13 @@
-const { Pool } = require('pg');
-const Redis = require('redis');
+const { Pool } = require("pg");
+const Redis = require("redis");
 
 // PostgreSQL configuration
 const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
   min: parseInt(process.env.DATABASE_POOL_MIN) || 2,
   max: parseInt(process.env.DATABASE_POOL_MAX) || 10,
 });
@@ -16,8 +19,8 @@ const redisClient = Redis.createClient({
   socket: {
     reconnectStrategy: (retries) => {
       if (retries > 10) {
-        console.error('Redis: Too many reconnect attempts');
-        return new Error('Too many reconnect attempts');
+        console.error("Redis: Too many reconnect attempts");
+        return new Error("Too many reconnect attempts");
       }
       return Math.min(retries * 100, 3000);
     },
@@ -25,12 +28,12 @@ const redisClient = Redis.createClient({
 });
 
 // Redis event handlers
-redisClient.on('error', (err) => {
-  console.error('Redis Client Error:', err);
+redisClient.on("error", (err) => {
+  console.error("Redis Client Error:", err);
 });
 
-redisClient.on('connect', () => {
-  console.log('Connected to Redis');
+redisClient.on("connect", () => {
+  console.info("Connected to Redis");
 });
 
 // Connect to Redis
@@ -38,7 +41,7 @@ const connectRedis = async () => {
   try {
     await redisClient.connect();
   } catch (error) {
-    console.error('Failed to connect to Redis:', error);
+    console.error("Failed to connect to Redis:", error);
   }
 };
 
@@ -48,10 +51,10 @@ const query = async (text, params) => {
   try {
     const res = await pgPool.query(text, params);
     const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
+    console.info("Executed query", { text, duration, rows: res.rowCount });
     return res;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error("Database query error:", error);
     throw error;
   }
 };
@@ -60,12 +63,12 @@ const query = async (text, params) => {
 const transaction = async (callback) => {
   const client = await pgPool.connect();
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     const result = await callback(client);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();

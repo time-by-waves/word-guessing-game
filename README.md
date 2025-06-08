@@ -430,6 +430,7 @@ GET /api/leaderboard
    ```
 
 2. **Database connection issues:**
+
    - Ensure PostgreSQL is running
    - Check DATABASE_URL in .env
    - Run migrations: `npm run db:migrate`

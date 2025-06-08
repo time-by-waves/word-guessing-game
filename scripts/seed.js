@@ -1,32 +1,60 @@
 #!/usr/bin/env node
 
-const { pgPool } = require('../src/db/config');
-const Player = require('../src/models/player');
+const { pgPool } = require("../src/db/config");
+const Player = require("../src/models/player");
 
 async function seedDatabase() {
-  console.log('Seeding database with sample data...');
+  console.info("Seeding database with sample data...");
 
   try {
     // Create sample players
     const players = [
-      { username: 'alice', displayName: 'Alice Wonder', email: 'alice@example.com', password: 'password123' },
-      { username: 'bob', displayName: 'Bob Builder', email: 'bob@example.com', password: 'password123' },
-      { username: 'charlie', displayName: 'Charlie Brown', email: 'charlie@example.com', password: 'password123' },
-      { username: 'diana', displayName: 'Diana Prince', email: 'diana@example.com', password: 'password123' },
-      { username: 'demo', displayName: 'Demo User', email: 'demo@example.com', password: 'demo' },
+      {
+        username: "alice",
+        displayName: "Alice Wonder",
+        email: "alice@example.com",
+        password: "password123",
+      },
+      {
+        username: "bob",
+        displayName: "Bob Builder",
+        email: "bob@example.com",
+        password: "password123",
+      },
+      {
+        username: "charlie",
+        displayName: "Charlie Brown",
+        email: "charlie@example.com",
+        password: "password123",
+      },
+      {
+        username: "diana",
+        displayName: "Diana Prince",
+        email: "diana@example.com",
+        password: "password123",
+      },
+      {
+        username: "demo",
+        displayName: "Demo User",
+        email: "demo@example.com",
+        password: "demo",
+      },
     ];
 
-    console.log('Creating sample players...');
+    console.info("Creating sample players...");
     const createdPlayers = [];
 
     for (const playerData of players) {
       try {
         const player = await Player.create(playerData);
         createdPlayers.push(player);
-        console.log(`✅ Created player: ${player.username}`);
+        console.info(`✅ Created player: ${player.username}`);
       } catch (error) {
-        if (error.code === '23505') { // Unique constraint violation
-          console.log(`⏭️  Player ${playerData.username} already exists, skipping...`);
+        if (error.code === "23505") {
+          // Unique constraint violation
+          console.warn(
+            `⏭️  Player ${playerData.username} already exists, skipping...`,
+          );
         } else {
           throw error;
         }
@@ -35,7 +63,7 @@ async function seedDatabase() {
 
     // Add some sample stats for demo purposes
     if (createdPlayers.length > 0) {
-      console.log('Adding sample stats...');
+      console.info("Adding sample stats...");
 
       await Player.updateStats(createdPlayers[0].id, {
         gamesPlayed: 50,
@@ -54,13 +82,12 @@ async function seedDatabase() {
       });
     }
 
-    console.log('✅ Database seeding completed successfully');
-    console.log('\n📝 Demo credentials:');
-    console.log('   Username: demo');
-    console.log('   Password: demo');
-
+    console.info("✅ Database seeding completed successfully");
+    console.info("\n📝 Demo credentials:");
+    console.info("   Username: demo");
+    console.info("   Password: demo");
   } catch (error) {
-    console.error('❌ Seeding failed:', error.message);
+    console.error("❌ Seeding failed:", error.message);
     process.exit(1);
   } finally {
     await pgPool.end();

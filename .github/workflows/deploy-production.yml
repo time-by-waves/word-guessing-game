@@ -2,20 +2,20 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       deployment_target:
-        description: 'Deployment target'
+        description: "Deployment target"
         required: true
-        default: 'binarylane'
+        default: "binarylane"
         type: choice
         options:
           - binarylane
           - azure
 
 env:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: "20.x"
   DOCKER_IMAGE_NAME: word-guessing-game
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci

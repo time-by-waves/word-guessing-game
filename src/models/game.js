@@ -1,17 +1,22 @@
-const { query, transaction } = require('../db/config');
-const { v4: uuidv4 } = require('uuid');
+const { query, transaction } = require("../db/config");
+const { v4: uuidv4 } = require("uuid");
 
 class Game {
   static generateRoomCode() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
     for (let i = 0; i < 6; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return code;
   }
 
-  static async create({ targetWord, difficulty, hostPlayerId, maxPlayers = 4 }) {
+  static async create({
+    targetWord,
+    difficulty,
+    hostPlayerId,
+    maxPlayers = 4,
+  }) {
     const gameId = uuidv4();
     const roomCode = this.generateRoomCode();
 
@@ -21,7 +26,7 @@ class Game {
         `INSERT INTO games (id, room_code, target_word, difficulty, max_players)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING *`,
-        [gameId, roomCode, targetWord, difficulty, maxPlayers]
+        [gameId, roomCode, targetWord, difficulty, maxPlayers],
       );
 
       // Add the host as the first player
@@ -29,7 +34,7 @@ class Game {
         await client.query(
           `INSERT INTO game_players (game_id, player_id, is_host)
            VALUES ($1, $2, true)`,
-          [gameId, hostPlayerId]
+          [gameId, hostPlayerId],
         );
       }
 
@@ -38,17 +43,14 @@ class Game {
   }
 
   static async findById(id) {
-    const result = await query(
-      `SELECT * FROM games WHERE id = $1`,
-      [id]
-    );
+    const result = await query(`SELECT * FROM games WHERE id = $1`, [id]);
     return result.rows[0];
   }
 
   static async findByRoomCode(roomCode) {
     const result = await query(
       `SELECT * FROM games WHERE room_code = $1 AND status != 'ended'`,
-      [roomCode]
+      [roomCode],
     );
     return result.rows[0];
   }
@@ -58,11 +60,11 @@ class Game {
       await query(
         `INSERT INTO game_players (game_id, player_id)
          VALUES ($1, $2)`,
-        [gameId, playerId]
+        [gameId, playerId],
       );
       return true;
     } catch (error) {
-      console.error('Error adding player to game:', error);
+      console.error("Error adding player to game:", error);
       return false;
     }
   }
@@ -70,7 +72,7 @@ class Game {
   static async removePlayer(gameId, playerId) {
     await query(
       `DELETE FROM game_players WHERE game_id = $1 AND player_id = $2`,
-      [gameId, playerId]
+      [gameId, playerId],
     );
   }
 
@@ -81,7 +83,7 @@ class Game {
        JOIN game_players gp ON p.id = gp.player_id
        WHERE gp.game_id = $1
        ORDER BY gp.joined_at`,
-      [gameId]
+      [gameId],
     );
     return result.rows;
   }
@@ -91,7 +93,7 @@ class Game {
       `INSERT INTO guesses (game_id, player_id, word, is_correct)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [gameId, playerId, word.toLowerCase(), isCorrect]
+      [gameId, playerId, word.toLowerCase(), isCorrect],
     );
 
     // Update player score if correct
@@ -100,7 +102,7 @@ class Game {
         `UPDATE game_players
          SET score = score + 100, is_winner = true
          WHERE game_id = $1 AND player_id = $2`,
-        [gameId, playerId]
+        [gameId, playerId],
       );
     }
 
@@ -117,11 +119,11 @@ class Game {
     const params = [gameId];
 
     if (playerId) {
-      queryText += ' AND g.player_id = $2';
+      queryText += " AND g.player_id = $2";
       params.push(playerId);
     }
 
-    queryText += ' ORDER BY g.guessed_at DESC';
+    queryText += " ORDER BY g.guessed_at DESC";
 
     const result = await query(queryText, params);
     return result.rows;
@@ -130,19 +132,22 @@ class Game {
   static async updateStatus(gameId, status) {
     const updateFields = { status };
 
-    if (status === 'active') {
-      updateFields.started_at = 'CURRENT_TIMESTAMP';
-    } else if (status === 'ended') {
-      updateFields.ended_at = 'CURRENT_TIMESTAMP';
+    if (status === "active") {
+      updateFields.started_at = "CURRENT_TIMESTAMP";
+    } else if (status === "ended") {
+      updateFields.ended_at = "CURRENT_TIMESTAMP";
     }
 
     const setClause = Object.entries(updateFields)
-      .map(([key, value]) => `${key} = ${value === 'CURRENT_TIMESTAMP' ? value : '$2'}`)
-      .join(', ');
+      .map(
+        ([key, value]) =>
+          `${key} = ${value === "CURRENT_TIMESTAMP" ? value : "$2"}`,
+      )
+      .join(", ");
 
     await query(
       `UPDATE games SET ${setClause} WHERE id = $1`,
-      status === 'CURRENT_TIMESTAMP' ? [gameId] : [gameId, status]
+      status === "CURRENT_TIMESTAMP" ? [gameId] : [gameId, status],
     );
   }
 
@@ -155,7 +160,7 @@ class Game {
        GROUP BY g.id
        ORDER BY g.created_at DESC
        LIMIT $1`,
-      [limit]
+      [limit],
     );
     return result.rows;
   }
@@ -168,10 +173,10 @@ class Game {
        SET status = 'ended', ended_at = CURRENT_TIMESTAMP
        WHERE status != 'ended'
        AND created_at < CURRENT_TIMESTAMP - INTERVAL '${timeout} minutes'
-       RETURNING id`
+       RETURNING id`,
     );
 
-    return result.rows.map(row => row.id);
+    return result.rows.map((row) => row.id);
   }
 
   static async getGameStats(gameId) {
@@ -179,19 +184,21 @@ class Game {
     const players = await this.getPlayers(gameId);
     const guesses = await this.getGuesses(gameId);
 
-    const duration = game.ended_at && game.started_at
-      ? Math.floor((new Date(game.ended_at) - new Date(game.started_at)) / 1000)
-      : null;
+    const duration =
+      game.ended_at && game.started_at
+        ? Math.floor(
+            (new Date(game.ended_at) - new Date(game.started_at)) / 1000,
+          )
+        : null;
 
     return {
       game,
       players,
       totalGuesses: guesses.length,
-      winner: players.find(p => p.is_winner),
+      winner: players.find((p) => p.is_winner),
       duration,
-      averageGuessesPerPlayer: players.length > 0
-        ? (guesses.length / players.length).toFixed(1)
-        : 0,
+      averageGuessesPerPlayer:
+        players.length > 0 ? (guesses.length / players.length).toFixed(1) : 0,
     };
   }
 }
