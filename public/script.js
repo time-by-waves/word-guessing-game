@@ -1,3 +1,5 @@
+import { io } from "/socket.io/socket.io.esm.min.js";
+
 class WordGuessingGame {
   constructor() {
     this.socket = io();

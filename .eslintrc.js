@@ -6,10 +6,11 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ["eslint:recommended", "plugin:jest/recommended", "prettier"],
   parserOptions: {
     ecmaVersion: "latest",
+    sourceType: "module",
   },
+  extends: ["eslint:recommended", "plugin:jest/recommended", "prettier"],
   plugins: ["jest"],
   rules: {
     "no-console": ["warn", { allow: ["info", "warn", "error"] }],
