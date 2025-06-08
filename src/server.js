@@ -10,7 +10,13 @@ const rateLimit = require("express-rate-limit");
 const winston = require("winston");
 require("dotenv").config();
 
-const { redisClient, connectRedis, query } = require("./db/config");
+const {
+  redisClient,
+  connectRedis,
+  query,
+  pingPg,
+  pingRedis,
+} = require("./db/config");
 const Player = require("./models/player");
 const Game = require("./models/game");
 
@@ -86,6 +92,50 @@ const limiter = rateLimit({
 });
 
 app.use("/api/", limiter);
+
+// Health check endpoint
+app.get("/health", async (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    message: "OK",
+    timestamp: Date.now(),
+    checks: [],
+  };
+  let overallHealthy = true;
+
+  try {
+    // Check PostgreSQL
+    const pgHealthy = await pingPg();
+    healthcheck.checks.push({
+      name: "PostgreSQL",
+      status: pgHealthy ? "UP" : "DOWN",
+    });
+    if (!pgHealthy) overallHealthy = false;
+
+    // Check Redis
+    const redisHealthy = await pingRedis();
+    healthcheck.checks.push({
+      name: "Redis",
+      status: redisHealthy ? "UP" : "DOWN",
+    });
+    if (!redisHealthy) overallHealthy = false;
+
+    if (overallHealthy) {
+      res.status(200).json(healthcheck);
+    } else {
+      healthcheck.message = "Service Unavailable";
+      res.status(503).json(healthcheck);
+    }
+  } catch (error) {
+    healthcheck.message = "Health check failed";
+    logger.error("Health check error:", error);
+    res.status(500).json({
+      status: "ERROR",
+      message: "Health check endpoint failed to execute.",
+      error: error.message,
+    });
+  }
+});
 
 // Socket.IO session middleware
 io.use((socket, next) => {
