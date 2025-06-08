@@ -76,11 +76,16 @@ CREATE TABLE IF NOT EXISTS player_achievements (
 );
 
 -- Create indexes for performance
-CREATE INDEX idx_games_room_code ON games(room_code);
-CREATE INDEX idx_games_status ON games(status);
-CREATE INDEX idx_guesses_game_id ON guesses(game_id);
-CREATE INDEX idx_guesses_player_id ON guesses(player_id);
-CREATE INDEX idx_player_stats_games_won ON player_stats(games_won DESC);
+CREATE INDEX IF NOT EXISTS idx_games_room_code
+  ON games(room_code);
+CREATE INDEX IF NOT EXISTS idx_games_status
+  ON games(status);
+CREATE INDEX IF NOT EXISTS idx_guesses_game_id
+  ON guesses(game_id);
+CREATE INDEX IF NOT EXISTS idx_guesses_player_id
+  ON guesses(player_id);
+CREATE INDEX IF NOT EXISTS idx_player_stats_games_won
+  ON player_stats(games_won DESC);
 
 -- Insert default achievements
 INSERT INTO achievements (name, description, icon, points) VALUES
@@ -94,7 +99,7 @@ INSERT INTO achievements (name, description, icon, points) VALUES
     ('Early Bird', 'Play a game before 6 AM', '🐦', 5);
 
 -- Create a view for leaderboard
-CREATE VIEW leaderboard AS
+CREATE OR REPLACE VIEW leaderboard AS
 SELECT
     p.id,
     p.display_name,

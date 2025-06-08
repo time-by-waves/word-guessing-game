@@ -6,7 +6,7 @@
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20",
-      "installYarnAndPnpm": true
+      "installYarnAndPnpm": false
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {},
@@ -72,8 +72,7 @@
   "postCreateCommand": "npm install && npm run prepare-dev",
   "postStartCommand": "npm run dev",
   "mounts": [
-    "source=${localWorkspaceFolder}/.git,target=/workspace/.git,type=bind,consistency=cached",
-    "source=node_modules,target=/workspace/node_modules,type=volume"
+    "source=${localWorkspaceFolder}/.git,target=/workspace/.git,type=bind,consistency=cached"
   ],
   "remoteUser": "node",
   "hostRequirements": {

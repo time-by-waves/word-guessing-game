@@ -70,8 +70,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Session configuration
-app.use(
-  session({
+// Create one session middleware instance
+const sessionMiddleware = session({
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
@@ -79,10 +79,12 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: parseInt(process.env.SESSION_TIMEOUT) || 86400000, // 24 hours
+      maxAge: parseInt(process.env.SESSION_TIMEOUT) || 86400000,
     },
-  }),
-);
+});
+
+// apply to Express
+app.use(sessionMiddleware);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -139,9 +141,9 @@ app.get("/health", async (req, res) => {
 
 // Socket.IO session middleware
 io.use((socket, next) => {
-  const req = socket.request;
-  req.res = {};
-  session(req, req.res, next);
+  // socket.request.res may be undefined; pass a dummy if so
+  const res = socket.request.res || {};
+  sessionMiddleware(socket.request, res, next);
 });
 
 // Game state storage

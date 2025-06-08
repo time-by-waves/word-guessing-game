@@ -16,7 +16,6 @@ RUN npm install -g \
   jest \
   eslint \
   prettier \
-  typescript \
   @playwright/test \
   npm-check-updates \
   concurrently \

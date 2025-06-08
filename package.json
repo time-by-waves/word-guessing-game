@@ -4,6 +4,7 @@
   "description": "A multiplayer word guessing game with real-time features",
   "main": "src/server.js",
   "scripts": {
+    "init": "npm install && npm run prepare",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest --coverage",
@@ -23,7 +24,14 @@
     "pre-commit": "npm run lint:fix && npm run format",
     "clean": "rimraf node_modules package-lock.json coverage .nyc_output dist",
     "clean:win": "if exist node_modules rmdir /s /q node_modules && if exist package-lock.json del package-lock.json && if exist coverage rmdir /s /q coverage && if exist .nyc_output rmdir /s /q .nyc_output && if exist dist rmdir /s /q dist",
-    "clean:unix": "rm -rf node_modules package-lock.json coverage .nyc_output dist"
+    "clean:unix": "rm -rf node_modules package-lock.json coverage .nyc_output dist",
+    "docker:build": "docker build --tag word-guessing-game-app:latest .",
+    "docker:up": "docker-compose up -d --build --remove-orphans",
+    "docker:down": "docker-compose down -v",
+    "docker:logs": "docker-compose logs -f app",
+    "docker:ps": "docker-compose ps",
+    "docker:exec:app": "docker-compose exec app sh",
+    "docker:ci:local": "npm run lint && npm run test && npm run docker:build && npm run docker:up && npm run test:e2e && npm run docker:down"
   },
   "dependencies": {
     "connect-redis": "^7.1.0",

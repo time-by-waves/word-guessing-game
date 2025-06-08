@@ -1,13 +1,12 @@
-version: "3.8"
-
 services:
   app:
     build: .
+    image: word-guessing-game-app:latest
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://gameuser:gamepass@postgres:5432/wordgame
+      - DATABASE_URL=postgresql://gameuser:gamepass@postgres:5432/wordgame?sslmode=disable
       - REDIS_URL=redis://redis:6379
     depends_on:
       - postgres
