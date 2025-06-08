@@ -4,7 +4,7 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm ci --only=production
 
 # Bundle app source
