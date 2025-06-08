@@ -1,5 +1,3 @@
-const io = require("socket.io-client");
-
 class WordGuessingGame {
   constructor() {
     this.socket = io();
