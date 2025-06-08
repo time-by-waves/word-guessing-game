@@ -5,10 +5,13 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production
 
 # Bundle app source
 COPY . .
+
+# Create directories for logs and screenshots
+RUN mkdir -p logs screenshots
 
 EXPOSE 3000
 

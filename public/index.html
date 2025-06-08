@@ -2,52 +2,141 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Guessing Game</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Guessing Game - Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Word Guessing Game</h1>
-        <p class="instructions">
-            Guess the target word! Your guesses will be ordered by how close
-            they are alphabetically to the target word.
-        </p>
+  <div class="container">
+    <header class="header">
+      <h1>Word Guessing Game</h1>
+      <div id="userInfo" class="user-info hidden">
+        <span id="username"></span>
+        <button id="logoutBtn" class="btn btn-small">Logout</button>
+      </div>
+    </header>
 
-        <div class="game-controls">
-            <button id="newGameBtn" class="btn btn-primary">
-                Start New Game
-            </button>
-        </div>
+    <!-- Login/Register Section -->
+    <div id="authSection" class="auth-section">
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+        <button class="tab-btn" data-tab="guest">Play as Guest</button>
+      </div>
 
-        <div id="gameArea" class="game-area hidden">
-            <div class="input-section">
-                <input type="text" id="guessInput" placeholder="Enter your guess..." maxlength="20">
-                <button id="submitGuess" class="btn btn-secondary">
-                    Submit Guess
-                </button>
-            </div>
+      <div id="loginTab" class="tab-content active">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input type="text" id="loginUsername" placeholder="Username" required>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+      </div>
 
-            <div id="message" class="message"></div>
-            <div id="hint" class="hint"></div>
+      <div id="registerTab" class="tab-content">
+        <h2>Create Account</h2>
+        <form id="registerForm">
+          <input type="text" id="registerUsername" placeholder="Username" required>
+          <input type="text" id="registerDisplayName" placeholder="Display Name">
+          <input type="email" id="registerEmail" placeholder="Email (optional)">
+          <input type="password" id="registerPassword" placeholder="Password" required>
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+      </div>
 
-            <div class="guess-history">
-                <div class="history-header">
-                    <h3 id="historyTitle">
-                        Guess History (Newest First)
-                    </h3>
-                    <button id="sortToggle" class="btn btn-toggle">
-                        Sort by Closeness
-                    </button>
-                </div>
-                <div id="guessList" class="guess-list"></div>
-            </div>
-        </div>
+      <div id="guestTab" class="tab-content">
+        <h2>Play as Guest</h2>
+        <p>Playing as a guest won't save your progress or achievements.</p>
+        <button id="playAsGuestBtn" class="btn btn-secondary">Continue as Guest</button>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Game Menu Section -->
+    <div id="gameMenu" class="game-menu hidden">
+      <div class="menu-grid">
+        <div class="menu-card">
+          <h3>Start New Game</h3>
+          <p>Create a new game room and invite friends</p>
+          <select id="difficultySelect" class="select">
+            <option value="easy">Easy (3-5 letters)</option>
+            <option value="medium" selected>Medium (4-8 letters)</option>
+            <option value="hard">Hard (7-12 letters)</option>
+          </select>
+          <button id="createGameBtn" class="btn btn-primary">Create Game</button>
+        </div>
+
+        <div class="menu-card">
+          <h3>Join Game</h3>
+          <p>Enter a room code to join an existing game</p>
+          <input type="text" id="roomCodeInput" placeholder="Enter room code" maxlength="6">
+          <button id="joinGameBtn" class="btn btn-secondary">Join Game</button>
+        </div>
+
+        <div class="menu-card">
+          <h3>Your Stats</h3>
+          <div id="playerStats" class="stats-display">
+            <p>Loading stats...</p>
+          </div>
+          <button id="viewLeaderboardBtn" class="btn btn-outline">View Leaderboard</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div id="gameArea" class="game-area hidden">
+      <div class="game-header">
+        <div class="room-info">
+          <h3>Room: <span id="roomCode"></span></h3>
+          <p>Players: <span id="playerCount">1</span>/<span id="maxPlayers">4</span></p>
+        </div>
+        <button id="leaveGameBtn" class="btn btn-small btn-danger">Leave Game</button>
+      </div>
+
+      <div class="players-list" id="playersList">
+        <!-- Players will be dynamically added here -->
+      </div>
+
+      <div class="input-section">
+        <input type="text" id="guessInput" placeholder="Enter your guess..." maxlength="20">
+        <button id="submitGuess" class="btn btn-secondary">Submit Guess</button>
+      </div>
+
+      <div id="message" class="message"></div>
+      <div id="hint" class="hint"></div>
+
+      <div class="guess-history">
+        <div class="history-header">
+          <h3 id="historyTitle">Guess History (Newest First)</h3>
+          <button id="sortToggle" class="btn btn-toggle">Sort by Closeness</button>
+        </div>
+        <div id="guessList" class="guess-list"></div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Leaderboard</h2>
+          <button class="close-btn">&times;</button>
+        </div>
+        <div id="leaderboardContent" class="leaderboard-content">
+          <!-- Leaderboard will be dynamically loaded -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div id="achievementNotification" class="achievement-notification hidden">
+      <h4>Achievement Unlocked!</h4>
+      <p id="achievementText"></p>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
