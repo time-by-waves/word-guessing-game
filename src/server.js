@@ -72,15 +72,15 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // Session configuration
 // Create one session middleware instance
 const sessionMiddleware = session({
-    store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET || "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: parseInt(process.env.SESSION_TIMEOUT) || 86400000,
-    },
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SESSION_SECRET || "your-secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    maxAge: parseInt(process.env.SESSION_TIMEOUT) || 86400000,
+  },
 });
 
 // apply to Express
