@@ -37,6 +37,7 @@ param(
   [Parameter(Mandatory = $false)]
   [hashtable]$ServerOptions,
 
+  # TODO: Implement password option securely
   [Parameter(Mandatory = $false)]
   [string]$Password
 )
@@ -89,14 +90,14 @@ function New-ServerConfig {
   $githubRepo = [Environment]::GetEnvironmentVariable('GITHUB_REPO')
 
   $config = @{
-    name        = "$ServerName-$Environment"
-    region      = $Region
-    size        = $Size
-    image       = $Image
-    ssh_keys    = @($SSHKeyName)
-    user_data   = Get-CloudInitScript -BastionHostIp $bastionHostIp `
+    name      = "$ServerName-$Environment"
+    region    = $Region
+    size      = $Size
+    image     = $Image
+    ssh_keys  = @($SSHKeyName)
+    user_data = Get-CloudInitScript -BastionHostIp $bastionHostIp `
       -GithubRepo $githubRepo -SshPort $SSHPort
-    backups     = ($Environment -eq 'production')
+    backups   = ($Environment -eq 'production')
   }
 
   # Optional parameters
@@ -128,10 +129,11 @@ function Get-CloudInitScript {
   param(
     [string]$BastionHostIp,
     [string]$GithubRepo,
-    [int]$SshPort
+    [int]   $SshPort
   )
+  $rootDir = Split-Path $PSScriptRoot -Parent -Parent
+  $templatePath = Join-Path $rootDir 'infrastructure\server\cloud-init-template.yml'
 
-  $templatePath = Join-Path $PSScriptRoot 'cloud-init-template.yml'
   if (-not (Test-Path $templatePath)) {
     throw "cloud-init template not found: $templatePath"
   }
