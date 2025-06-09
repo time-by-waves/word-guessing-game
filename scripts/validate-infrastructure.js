@@ -19,7 +19,7 @@ class InfrastructureValidator {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] [${level}] ${message}`;
 
-    console.log(logEntry);
+    console.info(logEntry);
 
     switch (level) {
       case 'ERROR':
@@ -331,38 +331,38 @@ class InfrastructureValidator {
 
   // Generate validation report
   generateReport() {
-    console.log('\n' + '='.repeat(50));
-    console.log('INFRASTRUCTURE VALIDATION REPORT');
-    console.log('='.repeat(50));
+    console.info('\n' + '='.repeat(50));
+    console.info('INFRASTRUCTURE VALIDATION REPORT');
+    console.info('='.repeat(50));
 
-    console.log(`\n📊 Summary:`);
-    console.log(`   Errors: ${this.errors.length}`);
-    console.log(`   Warnings: ${this.warnings.length}`);
-    console.log(`   Info: ${this.info.length}`);
+    console.info(`\n📊 Summary:`);
+    console.info(`   Errors: ${this.errors.length}`);
+    console.info(`   Warnings: ${this.warnings.length}`);
+    console.info(`   Info: ${this.info.length}`);
 
     if (this.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      this.errors.forEach(error => console.log(`   - ${error}`));
+      console.error('\n❌ Errors:');
+      this.errors.forEach(error => console.info(`   - ${error}`));
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      this.warnings.forEach(warning => console.log(`   - ${warning}`));
+      console.warn('\n⚠️  Warnings:');
+      this.warnings.forEach(warning => console.info(`   - ${warning}`));
     }
 
     if (this.errors.length === 0) {
-      console.log('\n✅ Infrastructure validation passed!');
-      console.log('\n🚀 Ready for deployment:');
-      console.log('   npm run deploy:staging -- -ServerName "your-server"');
+      console.info('\n✅ Infrastructure validation passed!');
+      console.info('\n🚀 Ready for deployment:');
+      console.info('   npm run deploy:staging -- -ServerName "your-server"');
     } else {
-      console.log('\n🔧 Please fix the errors above before deploying.');
-      console.log('\n📚 Documentation:');
-      console.log('   - GitHub Secrets: GITHUB_SECRETS_TEMPLATE.md');
-      console.log('   - Environment Setup: README.md');
-      console.log('   - Server Setup: infrastructure/server/setup-linux-vm.md');
+      console.info('\n🔧 Please fix the errors above before deploying.');
+      console.info('\n📚 Documentation:');
+      console.info('   - GitHub Secrets: GITHUB_SECRETS_TEMPLATE.md');
+      console.info('   - Environment Setup: README.md');
+      console.info('   - Server Setup: infrastructure/server/setup-linux-vm.md');
     }
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
 
     // Exit with error code if there are errors
     if (this.errors.length > 0) {
@@ -372,7 +372,7 @@ class InfrastructureValidator {
 
   // Run all validations
   async validate() {
-    console.log('🔍 Starting infrastructure validation...\n');
+    console.info('🔍 Starting infrastructure validation...\n');
 
     this.validateRequiredFiles();
     this.validateEnvironmentVariables();

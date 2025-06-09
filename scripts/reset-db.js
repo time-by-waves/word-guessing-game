@@ -10,7 +10,7 @@ async function resetDatabase() {
   });
 
   try {
-    console.log('🗄️  Resetting database...');
+    console.info('🗄️  Resetting database...');
 
     // Drop all tables
     await pool.query(`
@@ -23,7 +23,7 @@ async function resetDatabase() {
       END $$;
     `);
 
-    console.log('✅ Database reset complete');
+    console.info('✅ Database reset complete');
   } catch (error) {
     console.error('❌ Error resetting database:', error);
     process.exit(1);
