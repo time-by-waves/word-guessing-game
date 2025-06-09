@@ -10,7 +10,9 @@ PowerShell 7.2+ development with enterprise best practices.
 
 ### Cmdlet Names (SD01)
 
-- **Use Specific Nouns**: Prefix generic nouns with product/module name
+- **Use Specific Nouns**: Prefix generic nouns with product/module
+  name
+
   - ✅ `Get-SQLServer` not `Get-Server`
   - ✅ `New-AzureResourceGroup` not `New-ResourceGroup`
 
@@ -31,27 +33,31 @@ PowerShell 7.2+ development with enterprise best practices.
 
 Use approved parameter names for consistency:
 
-| Purpose | Standard Name | Alias | Type |
-|---------|---------------|-------|------|
-| File Path | `Path` | `PSPath` | `[string[]]` |
-| Literal Path | `LiteralPath` | | `[string[]]` |
-| Object Name | `Name` | | `[string[]]` |
-| Force Action | `Force` | | `[switch]` |
-| Pass Object | `PassThru` | | `[switch]` |
+| Purpose      | Standard Name | Alias    | Type         |
+| ------------ | ------------- | -------- | ------------ |
+| File Path    | `Path`        | `PSPath` | `[string[]]` |
+| Literal Path | `LiteralPath` |          | `[string[]]` |
+| Object Name  | `Name`        |          | `[string[]]` |
+| Force Action | `Force`       |          | `[switch]`   |
+| Pass Object  | `PassThru`    |          | `[switch]`   |
 
 ### Parameter Guidelines
 
 - **Singular Names**: Use singular even for array parameters
+
   - ✅ `[string[]]$Name` not `[string[]]$Names`
 
 - **Pascal Case**: Capitalize each word in parameter names
+
   - ✅ `$ErrorAction` not `$errorAction`
 
 - **Strong Typing**: Use specific .NET types, avoid basic strings
+
   - ✅ `[System.Uri]$Url` not `[string]$Url`
   - ✅ `[ValidateSet('Dev','Test','Prod')][string]$Environment`
 
 - **Switch Parameters**: Use for true/false scenarios
+
   - ✅ `[switch]$Force` not `[bool]$Force`
 
 - **Nullable Boolean**: Use for three-state scenarios
@@ -437,5 +443,5 @@ function Verb-Noun {
 
 ---
 
-*Based on Microsoft's Strongly Encouraged Development Guidelines*
-*Adapted for PowerShell 7.2+ and enterprise development practices*
+_Based on Microsoft's Strongly Encouraged Development Guidelines_
+_Adapted for PowerShell 7.2+ and enterprise development practices_
