@@ -1,6 +1,6 @@
-const { query } = require("../db/config");
-const { v4: uuidv4 } = require("uuid");
-const bcrypt = require("bcryptjs");
+const { query } = require('../db/config');
+const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
 
 class Player {
   static async create({ username, displayName, email, password }) {
@@ -10,7 +10,7 @@ class Player {
       `INSERT INTO players (id, username, display_name, email, password_hash)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, username, display_name, email, created_at`,
-      [uuidv4(), username, displayName || username, email, hashedPassword],
+      [uuidv4(), username, displayName || username, email, hashedPassword]
     );
 
     // Initialize player stats
@@ -25,7 +25,7 @@ class Player {
     const result = await query(
       `SELECT id, username, display_name, email, created_at, last_active
        FROM players WHERE id = $1`,
-      [id],
+      [id]
     );
     return result.rows[0];
   }
@@ -34,7 +34,7 @@ class Player {
     const result = await query(
       `SELECT id, username, display_name, email, password_hash, created_at, last_active
        FROM players WHERE username = $1`,
-      [username],
+      [username]
     );
     return result.rows[0];
   }
@@ -42,7 +42,7 @@ class Player {
   static async updateLastActive(id) {
     await query(
       `UPDATE players SET last_active = CURRENT_TIMESTAMP WHERE id = $1`,
-      [id],
+      [id]
     );
   }
 
@@ -67,7 +67,7 @@ class Player {
   static async getStats(playerId) {
     const result = await query(
       `SELECT * FROM player_stats WHERE player_id = $1`,
-      [playerId],
+      [playerId]
     );
     return result.rows[0];
   }
@@ -102,7 +102,7 @@ class Player {
         correctGuesses,
         avgGuessesPerGame,
         bestTimeSeconds,
-      ],
+      ]
     );
   }
 
@@ -113,7 +113,7 @@ class Player {
        JOIN player_achievements pa ON a.id = pa.achievement_id
        WHERE pa.player_id = $1
        ORDER BY pa.earned_at DESC`,
-      [playerId],
+      [playerId]
     );
     return result.rows;
   }
@@ -124,11 +124,11 @@ class Player {
         `INSERT INTO player_achievements (player_id, achievement_id)
          VALUES ($1, $2)
          ON CONFLICT DO NOTHING`,
-        [playerId, achievementId],
+        [playerId, achievementId]
       );
       return true;
     } catch (error) {
-      console.error("Error granting achievement:", error);
+      console.error('Error granting achievement:', error);
       return false;
     }
   }
@@ -145,7 +145,7 @@ class Player {
        WHERE username ILIKE $1 OR display_name ILIKE $1
        ORDER BY last_active DESC
        LIMIT $2`,
-      [`%${searchTerm}%`, limit],
+      [`%${searchTerm}%`, limit]
     );
     return result.rows;
   }

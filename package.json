@@ -1,39 +1,10 @@
 {
-  "name": "word-guessing-game",
-  "version": "1.0.0",
-  "description": "A multiplayer word guessing game with real-time features",
-  "main": "src/server.js",
-  "scripts": {
-    "init": "npm install && npm run prepare",
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "lint": "eslint . --ext .js,.jsx",
-    "lint:debug": "eslint . --ext .js,.jsx --debug",
-    "lint:fix": "eslint . --ext .js,.jsx --fix",
-    "format": "prettier --write \"**/*.{js,jsx,json,md,yml,yaml}\"",
-    "prepare-dev": "npm run db:migrate && npm run db:seed",
-    "db:migrate": "node scripts/migrate.js",
-    "db:seed": "node scripts/seed.js",
-    "mcp:start": "node scripts/mcp-server.js",
-    "build": "npm run lint && npm test",
-    "prepare": "husky install",
-    "pre-commit": "npm run lint:fix && npm run format",
-    "clean": "rimraf node_modules package-lock.json coverage .nyc_output dist",
-    "clean:win": "if exist node_modules rmdir /s /q node_modules && if exist package-lock.json del package-lock.json && if exist coverage rmdir /s /q coverage && if exist .nyc_output rmdir /s /q .nyc_output && if exist dist rmdir /s /q dist",
-    "clean:unix": "rm -rf node_modules package-lock.json coverage .nyc_output dist",
-    "docker:build": "docker build --tag word-guessing-game-app:latest .",
-    "docker:up": "docker-compose up -d --build --remove-orphans",
-    "docker:down": "docker-compose down -v",
-    "docker:logs": "docker-compose logs -f app",
-    "docker:ps": "docker-compose ps",
-    "docker:exec:app": "docker-compose exec app sh",
-    "docker:ci:local": "npm run lint && npm run test && npm run docker:build && npm run docker:up && npm run test:e2e && npm run docker:down"
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/time-by-waves/word-guessing-game/issues"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "connect-redis": "^7.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -41,15 +12,15 @@
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.17.3",
     "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "random-words": "^2.0.1",
     "redis": "^4.6.10",
     "socket.io": "^4.8.1",
     "uuid": "^9.0.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
     "winston": "^3.11.0"
   },
+  "description": "A multiplayer word guessing game with real-time features",
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0",
     "@playwright/test": "^1.40.1",
@@ -63,8 +34,28 @@
     "playwright": "^1.40.1",
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
-    "supertest": "^6.3.3",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "homepage": "https://wordguessinggame.com",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js"
+    ],
+    "coverageDirectory": "coverage",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/?(*.)+(spec|test).js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/e2e/"
+    ]
   },
   "keywords": [
     "game",
@@ -74,27 +65,7 @@
     "express",
     "socket.io"
   ],
-  "author": "",
   "license": "Unlicense",
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/**/*.test.js"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*.js",
-      "**/?(*.)+(spec|test).js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/tests/e2e/"
-    ]
-  },
   "lint-staged": {
     "*.{js,jsx}": [
       "eslint --fix",
@@ -103,5 +74,60 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
-  }
+  },
+  "main": "src/server.js",
+  "name": "word-guessing-game",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/time-by-waves/word-guessing-game.git"
+  },
+  "scripts": {
+    "backup:create": "bash scripts/backup.sh",
+    "build": "npm run lint && npm test",
+    "clean": "rimraf node_modules package-lock.json coverage .nyc_output dist",
+    "clean:unix": "rm -rf node_modules package-lock.json coverage .nyc_output dist",
+    "clean:win": "if exist node_modules rmdir /s /q node_modules && if exist package-lock.json del package-lock.json && if exist coverage rmdir /s /q coverage && if exist .nyc_output rmdir /s /q .nyc_output && if exist dist rmdir /s /q dist",
+    "db:migrate": "node scripts/migrate.js",
+    "db:reset": "node scripts/reset-db.js && npm run db:migrate && npm run db:seed",
+    "db:seed": "node scripts/seed.js",
+    "deploy:production": "npm run infra:provision -- -Environment production",
+    "deploy:staging": "npm run infra:provision -- -Environment staging",
+    "dev": "nodemon src/server.js",
+    "docker:build": "docker build --tag word-guessing-game-app:latest .",
+    "docker:ci:local": "npm run lint && npm run test && npm run docker:build && npm run docker:up && npm run test:e2e && npm run docker:down",
+    "docker:down": "docker-compose down -v",
+    "docker:exec:app": "docker-compose exec app sh",
+    "docker:logs:app": "docker-compose logs -f app",
+    "docker:logs:postgres": "docker-compose logs -f postgres",
+    "docker:logs:redis": "docker-compose logs -f redis",
+    "docker:ps": "docker-compose ps",
+    "docker:up": "docker-compose up -d --build --remove-orphans",
+    "format": "prettier --write \"**/*.{js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check .",
+    "health:check": "curl -f http://localhost:3000/health || exit 1",
+    "infra:deploy": "bash scripts/setup-project.sh",
+    "infra:provision": "pwsh scripts/powershell/new-binarylane-server.ps1",
+    "infra:secrets": "bash scripts/setup-secrets.sh",
+    "infra:validate": "node scripts/validate-infrastructure.js",
+    "init": "npm install && npm run init-git-hooks",
+    "init-git-hooks": "husky install",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:debug": "eslint . --ext .js,.jsx --debug",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "mcp:start": "node scripts/mcp-server.js",
+    "monitoring:logs": "tail -f logs/*.log",
+    "pre-commit": "npm run lint:fix && npm run format",
+    "prepare-dev": "npm run db:migrate && npm run db:seed",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:update": "npm update && npm audit fix",
+    "start": "node src/server.js",
+    "test": "jest --coverage",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:watch": "jest --watch",
+    "type-check": "echo 'Type checking not configured'",
+    "validate-env": "node scripts/validate-env.js"
+  },
+  "version": "1.0.0"
 }

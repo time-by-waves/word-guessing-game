@@ -168,7 +168,8 @@ Show recent SSH service status on each login
 
 1. Generate an RSA key pair on your local machine
 
-   - Run the following command (this names your key, adds a comment, and skips passphrase prompts):
+   - Run the following command (this names your key, adds a comment,
+     and skips passphrase prompts):
      - `ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_wordguess -C "word-guessing-game key"`
 
 2. Copy the public key to the server
@@ -184,7 +185,8 @@ Show recent SSH service status on each login
      - `chmod 700 ~/.ssh`
    - Create or update authorized_keys
      - `touch ~/.ssh/authorized_keys`
-   - Paste your local `id_rsa_wordguess.pub` contents into the server's `authorized_keys` file
+   - Paste your local `id_rsa_wordguess.pub` contents into the
+     server's `authorized_keys` file
      - `nano ~/.ssh/authorized_keys`
    - Ensure the permissions are set correctly
      - `chmod 600 ~/.ssh/authorized_keys`
@@ -194,8 +196,10 @@ Show recent SSH service status on each login
 1. Allow SSH
 
    - Run the following commands
-     - `sudo ufw allow <NEW_PORT>/tcp` # Only this line is needed if you changed the SSH port
-     - `# sudo ufw allow OpenSSH` # This is redundant if using a custom port
+     - `sudo ufw allow <NEW_PORT>/tcp` # Only this line is needed if
+       you changed the SSH port
+     - `# sudo ufw allow OpenSSH` # This is redundant if using a
+       custom port
 
 2. **Allow** application ports
 
@@ -203,12 +207,15 @@ Show recent SSH service status on each login
      - `sudo ufw allow http` # For web traffic (port 80)
      - `sudo ufw allow https` # For secure web traffic (port 443)
 
-3. Allow remote debugging from office IP
+3. Allow remote debugging from Bastion host IP
 
    - Run the following commands
-     - `sudo ufw allow from <OFFICE_IP> to any port 5432 proto tcp` # PostgreSQL
-     - `sudo ufw allow from <OFFICE_IP> to any port 6379 proto tcp` # Redis
-     - `sudo ufw allow from <OFFICE_IP> to any port 3000 proto tcp` # Node.js app
+     - `sudo ufw allow from <BASTION_HOST_IP> to any port 5432 proto tcp` #
+       PostgreSQL
+     - `sudo ufw allow from <BASTION_HOST_IP> to any port 6379 proto tcp` #
+       Redis
+     - `sudo ufw allow from <BASTION_HOST_IP> to any port 3000 proto tcp` #
+       Node.js app
 
 4. Enable UFW
 
@@ -244,7 +251,7 @@ Show recent SSH service status on each login
          postgres:
            # ...other config...
            ports:
-             - "127.0.0.1:5432:5432" # Only expose to localhost
+             - '127.0.0.1:5432:5432' # Only expose to localhost
        ```
      - For Redis:
        ```yaml
@@ -252,13 +259,13 @@ Show recent SSH service status on each login
          redis:
            # ...other config...
            ports:
-             - "127.0.0.1:6379:6379" # Only expose to localhost
+             - '127.0.0.1:6379:6379' # Only expose to localhost
        ```
 
 3. Create a Docker network with fixed subnet
 
    - Run the following command
-     - `docker network create --subnet=172.20.0.0/16 word_guessing_network`
+     - `docker network create --subnet=172.20.0.0/24 word_guessing_network`
    - Update docker-compose.yml to use this network:
      ```yaml
      networks:
@@ -279,7 +286,8 @@ Show recent SSH service status on each login
      - `sudo sed -i '/^#/d' /etc/ssh/sshd_config`
    - Run the following command to remove all empty lines
      - `sudo sed -i '/^$/d' /etc/ssh/sshd_config`
-   - Replace the content with the values found in the ./sshd_config.hardening file of this repository
+   - Replace the content with the values found in the
+     ./sshd_config.hardening file of this repository
 
 2. Install and configure Fail2Ban
 
@@ -298,22 +306,31 @@ Show recent SSH service status on each login
 
    - Add the following lines to `/etc/sysctl.conf`:
      - `net.ipv4.ip_forward = 0` # Disable IPv4 packet forwarding
-     - `net.ipv4.conf.all.send_redirects = 0` # Disable sending ICMP redirects (all interfaces)
-     - `net.ipv4.conf.default.send_redirects = 0` # Disable sending ICMP redirects (default)
+     - `net.ipv4.conf.all.send_redirects = 0` # Disable sending ICMP
+       redirects (all interfaces)
+     - `net.ipv4.conf.default.send_redirects = 0` # Disable sending
+       ICMP redirects (default)
      - `net.ipv6.conf.all.disable_ipv6 = 1` # Disable IPv6
    - Reload sysctl settings
      - `sudo sysctl -p`
 
 4. Disable unused filesystems
 
-   **Purpose:**
-   Disabling filesystems that your server does not use reduces the attack surface. If an attacker tries to exploit a vulnerability in a filesystem driver that is not loaded, the attack will fail. This is a common hardening step for Linux servers.
+   **Purpose:** Disabling filesystems that your server does not use
+   reduces the attack surface. If an attacker tries to exploit a
+   vulnerability in a filesystem driver that is not loaded, the attack
+   will fail. This is a common hardening step for Linux servers.
 
-   **How it works:**
-   The `install <filesystem> /bin/true` directive in a file under `/etc/modprobe.d/` tells the Linux kernel to run `/bin/true` (which does nothing and exits successfully) whenever there is an attempt to load the specified filesystem module. This effectively prevents the module from being loaded, even if requested by a user or process.
+   **How it works:** The `install <filesystem> /bin/true` directive in
+   a file under `/etc/modprobe.d/` tells the Linux kernel to run
+   `/bin/true` (which does nothing and exits successfully) whenever
+   there is an attempt to load the specified filesystem module. This
+   effectively prevents the module from being loaded, even if
+   requested by a user or process.
 
-   **Commands in this step:**
-   Each `echo ... | sudo tee ...` command creates a configuration file that blacklists a specific filesystem module. For example:
+   **Commands in this step:** Each `echo ... | sudo tee ...` command
+   creates a configuration file that blacklists a specific filesystem
+   module. For example:
 
    ```bash
    echo "install cramfs /bin/true" | sudo tee /etc/modprobe.d/disable_cramfs.conf
@@ -331,11 +348,13 @@ Show recent SSH service status on each login
    <!-- - `squashfs` (compressed read-only filesystem) -->
    - `udf` (Universal Disk Format, used on DVDs)
 
-   **When to skip:**
-   If you know your application or server needs to mount one of these filesystems (for example, you use `squashfs` for snaps or `udf` for DVDs), do **not** disable that filesystem.
+   **When to skip:** If you know your application or server needs to
+   mount one of these filesystems (for example, you use `squashfs` for
+   snaps or `udf` for DVDs), do **not** disable that filesystem.
 
-   **Summary:**
-   This step is a defense-in-depth measure. It is safe for most web servers and VMs, but always review which filesystems your system actually needs before disabling.
+   **Summary:** This step is a defense-in-depth measure. It is safe
+   for most web servers and VMs, but always review which filesystems
+   your system actually needs before disabling.
 
    - Create a blacklist file for each filesystem
 
@@ -374,7 +393,9 @@ Show recent SSH service status on each login
      fi
      ```
 
-   - This configuration allows the SSH status to display automatically on login **without** prompting for your password, as long as the sudoers entry is correct and specific to the command above.
+   - This configuration allows the SSH status to display automatically
+     on login **without** prompting for your password, as long as the
+     sudoers entry is correct and specific to the command above.
 
 ## Ongoing Monitoring & Maintenance
 

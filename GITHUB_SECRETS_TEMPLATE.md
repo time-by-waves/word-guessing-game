@@ -1,10 +1,12 @@
 # GitHub Secrets Configuration Template
 
-This file contains all the secrets you need to configure in your GitHub repository for the CI/CD pipelines to work correctly.
+This file contains all the secrets you need to configure in your
+GitHub repository for the CI/CD pipelines to work correctly.
 
 ## How to Add Secrets
 
-1. Go to your repository: `https://github.com/YOUR_USERNAME/word-guessing-game`
+1. Go to your repository:
+   `https://github.com/YOUR_USERNAME/word-guessing-game`
 2. Click **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
 4. Add each secret below with the name and value specified
@@ -28,12 +30,13 @@ This file contains all the secrets you need to configure in your GitHub reposito
 
 ### 🔷 Binary Lane Deployment
 
-| Secret Name           | Description         | Example/How to Get                     |
-| --------------------- | ------------------- | -------------------------------------- |
-| `BINARYLANE_HOST`     | Server IP or domain | `203.0.113.0` or `game.yourdomain.com` |
-| `BINARYLANE_USERNAME` | SSH username        | `root` or `deploy`                     |
-| `BINARYLANE_SSH_KEY`  | Private SSH key     | See "Generating SSH Key" below         |
-| `BINARYLANE_URL`      | Public URL          | `https://game.yourdomain.com`          |
+| Secret Name            | Description           | Example/How to Get                     |
+| ---------------------- | --------------------- | -------------------------------------- |
+| `BINARYLANE_API_TOKEN` | Binary Lane API token | `bl_api_xxxxxxxxxxxxxxxx`              |
+| `BINARYLANE_HOST`      | Server IP or domain   | `203.0.113.0` or `game.yourdomain.com` |
+| `BINARYLANE_USERNAME`  | SSH username          | `root` or `deploy`                     |
+| `BINARYLANE_SSH_KEY`   | Private SSH key       | See "Generating SSH Key" below         |
+| `BINARYLANE_URL`       | Public URL            | `https://game.yourdomain.com`          |
 
 ### 🔷 Database Secrets
 
@@ -111,10 +114,10 @@ After adding all secrets, test them by:
 
 ```yaml
 # These are examples only - generate your own!
-STAGING_SESSION_SECRET: "Rt2u5A7x+KbPeShVmYq3t6w9z$C&F)J@"
-STAGING_JWT_SECRET: "5v8y/B?E(H+MbQeThWmZq4t7w9z$C&F)"
-AZURE_REGISTRY_URL: "wordguessinggame.azurecr.io"
-BINARYLANE_HOST: "203.0.113.42"
+STAGING_SESSION_SECRET: 'Rt2u5A7x+KbPeShVmYq3t6w9z$C&F)J@'
+STAGING_JWT_SECRET: '5v8y/B?E(H+MbQeThWmZq4t7w9z$C&F)'
+AZURE_REGISTRY_URL: 'wordguessinggame.azurecr.io'
+BINARYLANE_HOST: '203.0.113.42'
 ```
 
 ## Troubleshooting

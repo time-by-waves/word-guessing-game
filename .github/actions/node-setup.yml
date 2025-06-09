@@ -1,0 +1,64 @@
+###########################################################
+name: Node Setup
+###########################################################
+on:
+  #########################################################
+  workflow_call:
+    #######################################################
+    inputs:
+      #####################################################
+      node-version:
+        required: true
+        type: string
+      #####################################################
+      run-lint:
+        required: false
+        type: boolean
+        default: false
+      #####################################################
+      run-test:
+        required: false
+        type: boolean
+        default: false
+      #####################################################
+      test-command:
+        required: false
+        type: string
+        default: "npm test"
+###########################################################
+jobs:
+  #########################################################
+  setup:
+    #######################################################
+    runs-on: ubuntu-latest
+    #######################################################
+    steps:
+      #####################################################
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      #####################################################
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: "npm"
+      #####################################################
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      #####################################################
+      - name: Install dependencies
+        run: npm ci
+      #####################################################
+      - name: Run linter
+        if: inputs.run-lint == true
+        run: npm run lint
+      #####################################################
+      - name: Run tests
+        if: inputs.run-test == true
+        run: ${{ inputs.test-command }}
+###########################################################

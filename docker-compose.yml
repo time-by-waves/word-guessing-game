@@ -1,7 +1,13 @@
+###########################################################
 services:
+  #########################################################
   app:
+    #######################################################
     build: .
     image: word-guessing-game-app:latest
+    command: >
+      sh -c "node scripts/validate-env.js
+      && npm start"
     ports:
       - "3000:3000"
     environment:
@@ -11,11 +17,12 @@ services:
     depends_on:
       - postgres
       - redis
-    restart: unless-stopped
+    restart: "on-failure:5"
     networks:
       - game-network
-
+  #########################################################
   postgres:
+    #######################################################
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: gameuser
@@ -29,8 +36,9 @@ services:
     restart: unless-stopped
     networks:
       - game-network
-
+  #########################################################
   redis:
+    #######################################################
     image: redis:7-alpine
     command: redis-server --appendonly yes
     ports:
@@ -40,11 +48,12 @@ services:
     restart: unless-stopped
     networks:
       - game-network
-
+###########################################################
 volumes:
   postgres_data:
   redis_data:
-
+###########################################################
 networks:
   game-network:
     driver: bridge
+###########################################################

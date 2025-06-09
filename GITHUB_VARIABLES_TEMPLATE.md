@@ -1,6 +1,7 @@
 # GitHub Variables Configuration Template
 
-Add these under **Settings → Secrets and variables → Variables** in your repo.
+Add these under **Settings → Secrets and variables → Variables** in
+your repo.
 
 ## General
 

@@ -1,6 +1,5 @@
 # Domain files
-infrastructure/dns/*.zone
-infrastructure/server/server.create.response*
+infrastructure/binarylane/*
 
 # Dependencies
 node_modules/

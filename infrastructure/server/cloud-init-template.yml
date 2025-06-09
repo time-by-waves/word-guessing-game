@@ -1,0 +1,40 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - wget
+  - git
+  - ufw
+  - fail2ban
+  - htop
+
+users:
+  - name: wordgame
+    groups: sudo
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - ssh-ed25519 PLACEHOLDER_SSH_KEY word-game-deploy
+
+write_files:
+  - content: |
+      #!/bin/bash
+      export ENVIRONMENT=$Environment
+      export APP_USER=wordgame
+      export SSH_PORT=$SshPort
+      export BASTION_HOST_IP=$BastionHostIp
+      export GITHUB_REPO=$GithubRepo
+
+      # Download and run setup script
+      curl -fsSL https://raw.githubusercontent.com/$GithubRepo/main/scripts/setup-project.sh | bash
+    path: /tmp/bootstrap.sh
+    permissions: "0755"
+
+runcmd:
+  - /tmp/bootstrap.sh
+  - systemctl enable word-guessing-game
+  - ufw --force enable
+
+final_message: "Word Guessing Game server setup complete !"

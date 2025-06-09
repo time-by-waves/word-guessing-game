@@ -1,0 +1,3 @@
+- Answers should be short, less than 30 words per sentence to explain the code
+- Use Lists and tables to show data
+- Keep output to a technical level, no fluff, only expert level content
