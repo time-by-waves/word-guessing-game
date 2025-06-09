@@ -1,3 +1,7 @@
+# Domain files
+infrastructure/dns/*.zone
+infrastructure/server/server.create.response*
+
 # Dependencies
 node_modules/
 npm-debug.log*

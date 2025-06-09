@@ -112,7 +112,9 @@ app.get("/health", async (req, res) => {
       name: "PostgreSQL",
       status: pgHealthy ? "UP" : "DOWN",
     });
-    if (!pgHealthy) overallHealthy = false;
+    if (!pgHealthy) {
+      overallHealthy = false;
+    }
 
     // Check Redis
     const redisHealthy = await pingRedis();
@@ -120,7 +122,9 @@ app.get("/health", async (req, res) => {
       name: "Redis",
       status: redisHealthy ? "UP" : "DOWN",
     });
-    if (!redisHealthy) overallHealthy = false;
+    if (!redisHealthy) {
+      overallHealthy = false;
+    }
 
     if (overallHealthy) {
       res.status(200).json(healthcheck);
