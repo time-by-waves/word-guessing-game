@@ -21,7 +21,8 @@ jobs:
 
       - name: Check for merge conflict markers
         run: |
-          ! grep -r '<<<<<<<\|=======\|>>>>>>>' .
+          ! grep -r '<<<<<<<\|=======\|>>>>>>>' . \
+            --exclude='.github/workflows/pr.yml'
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
