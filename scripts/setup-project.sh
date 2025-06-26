@@ -15,7 +15,7 @@ LOG_FILE="/var/log/${PROJECT_NAME}-setup.log"
 
 # Logging function
 log() {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FIls clLE"
 }
 
 # Function to check if command exists

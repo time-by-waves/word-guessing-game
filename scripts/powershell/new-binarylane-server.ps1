@@ -139,10 +139,10 @@ function Get-CloudInitScript {
   }
   $template = Get-Content $templatePath -Raw
 
-  $template = $template -replace '\$Environment', $Environment
-  $template = $template -replace '\$SshPort', $SshPort
-  $template = $template -replace '\$BastionHostIp', $BastionHostIp
-  $template = $template -replace '\$GithubRepo', $GithubRepo
+  $template = $template -replace '\$Environment', '$($Environment)'
+  $template = $template -replace '\$SshPort', '$($SshPort)'
+  $template = $template -replace '\$BastionHostIp', '$($BastionHostIp)'
+  $template = $template -replace '\$GithubRepo', '$($GithubRepo)'
 
   return $template
 }
