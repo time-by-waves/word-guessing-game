@@ -82,7 +82,6 @@
     "url": "https://github.com/time-by-waves/word-guessing-game.git"
   },
   "scripts": {
-    "backup:create": "bash scripts/backup.sh",
     "build": "npm run lint && npm test",
     "clean": "rimraf node_modules package-lock.json coverage .nyc_output dist",
     "clean:unix": "rm -rf node_modules package-lock.json coverage .nyc_output dist",
