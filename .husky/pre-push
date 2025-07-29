@@ -1,0 +1,16 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running lint and unit tests before push..."
+
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "Lint failed. Aborting push."
+  exit 1
+fi
+
+npm test -- --coverage=false --passWithNoTests
+if [ $? -ne 0 ]; then
+  echo "Unit tests failed. Aborting push."
+  exit 1
+fi

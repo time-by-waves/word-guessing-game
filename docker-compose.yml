@@ -1,0 +1,59 @@
+###########################################################
+services:
+  #########################################################
+  app:
+    #######################################################
+    build: .
+    image: word-guessing-game-app:latest
+    command: >
+      sh -c "node scripts/validate-env.js
+      && npm start"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://gameuser:gamepass@postgres:5432/wordgame?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    restart: "on-failure:5"
+    networks:
+      - game-network
+  #########################################################
+  postgres:
+    #######################################################
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: gameuser
+      POSTGRES_PASSWORD: gamepass
+      POSTGRES_DB: wordgame
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./.devcontainer/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - game-network
+  #########################################################
+  redis:
+    #######################################################
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - game-network
+###########################################################
+volumes:
+  postgres_data:
+  redis_data:
+###########################################################
+networks:
+  game-network:
+    driver: bridge
+###########################################################

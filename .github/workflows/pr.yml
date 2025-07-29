@@ -1,0 +1,67 @@
+###########################################################
+name: PR Validation
+###########################################################
+on:
+  #########################################################
+  pull_request:
+    #######################################################
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: ["main", "develop"]
+###########################################################
+env:
+  NODE_VERSION: "20.x"
+  CACHE_VERSION: "v1"
+###########################################################
+jobs:
+  #########################################################
+  validate:
+    #######################################################
+    name: "PR: Quick Validation"
+    runs-on: ubuntu-latest
+    if:
+      github.event.pull_request.draft == false
+      #####################################################
+    steps:
+      #####################################################
+      - name: Perform Node Setup and Install Dependencies
+        uses: ./.github/actions/node-setup.yml
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      #####################################################
+      - name: Check for merge conflict markers
+        run: |
+          ! grep -r '<<<<<<<\|=======\|>>>>>>>' . \
+            --exclude='.github/workflows/pr.yml' \
+            --exclude-dir=.git
+      #####################################################
+      - name: Run linter
+        run: npm run lint
+      #####################################################
+      - name: Run type check
+        run: npm run type-check --if-present
+      #####################################################
+      - name: Run unit tests
+        run: npm test -- --coverage=false --passWithNoTests
+  #########################################################
+  security:
+    #######################################################
+    name: "PR: Security Scan"
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    #######################################################
+    steps:
+      #####################################################
+      - name: Perform Node Setup and Install Dependencies
+        uses: ./.github/actions/node-setup.yml
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      #####################################################
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+      #####################################################
+      - name: Check for vulnerabilities
+        uses: actions/dependency-review-action@v3
+      #####################################################
+      - name: Check for outdated dependencies
+        run: npm outdated || true
+###########################################################
