@@ -28,7 +28,7 @@ write_files:
       export GITHUB_REPO=$GithubRepo
 
       # Download and run setup script
-      curl -fsSL https://raw.githubusercontent.com/$GithubRepo/main/scripts/setup-project.sh | bash
+      curl -fsSL https://raw.githubusercontent.com/$GithubRepo/main/infrastructure/scripts/setup-project.sh | bash
     path: /tmp/bootstrap.sh
     permissions: "0755"
 

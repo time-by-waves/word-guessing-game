@@ -192,7 +192,7 @@ The project includes comprehensive CI/CD pipelines:
    npm run infra:secrets
 
    # Add secrets to repository settings
-   # See: GITHUB_SECRETS_TEMPLATE.md
+   # See: wiki/GITHUB_SECRETS_TEMPLATE.md
    ```
 
 2. **Provision Infrastructure**
@@ -285,10 +285,13 @@ npm run monitoring:logs
 word-guessing-game/
 ├── src/                    # Application source code
 ├── tests/                  # Test suites
-├── scripts/                # Infrastructure and utility scripts
-├── .github/                # GitHub Actions workflows
+├── scripts/                # Application scripts
+├── infrastructure/
+│   ├── scripts/            # Infrastructure automation
+│   ├── server/             # Server provisioning files
+│   └── workflows/          # CI/CD pipelines
+├── .github/                # GitHub configuration
 ├── .devcontainer/          # Development container config
-├── infrastructure/         # Infrastructure documentation
 ├── docker-compose.yml      # Local development services
 ├── Dockerfile              # Application container
 └── package.json            # Project configuration
@@ -329,10 +332,10 @@ npm run docker:clean
 
 ## 📚 Documentation
 
-- [GitHub Secrets Setup](GITHUB_SECRETS_TEMPLATE.md)
-- [GitHub Variables Setup](GITHUB_VARIABLES_TEMPLATE.md)
-- [Linux VM Setup Guide](infrastructure/server/setup-linux-vm.md)
-- [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+- [GitHub Secrets Setup](wiki/GITHUB_SECRETS_TEMPLATE.md)
+- [GitHub Variables Setup](wiki/GITHUB_VARIABLES_TEMPLATE.md)
+- [Linux VM Setup Guide](wiki/setup-linux-vm.md)
+- [Troubleshooting Guide](wiki/TROUBLESHOOTING.md)
 
 ## 🤝 Contributing
 
@@ -355,7 +358,7 @@ This project is released into the public domain under the
   [GitHub Issues](https://github.com/YOUR_USERNAME/word-guessing-game/issues)
 - **Discussions**:
   [GitHub Discussions](https://github.com/YOUR_USERNAME/word-guessing-game/discussions)
-- **Documentation**: See `docs/` directory
+- **Documentation**: See `wiki/` directory
 
 ---
 

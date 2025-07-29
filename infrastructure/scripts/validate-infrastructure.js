@@ -42,11 +42,11 @@ class InfrastructureValidator {
       'package.json',
       'docker-compose.yml',
       'Dockerfile',
-      '.github/workflows/ci.yml',
-      '.github/workflows/cd.yml',
-      'scripts/setup-project.sh',
-      'scripts/setup-secrets.sh',
-      'infrastructure/server/setup-linux-vm.md',
+      'infrastructure/workflows/ci.yml',
+      'infrastructure/workflows/cd.yml',
+      'infrastructure/scripts/setup-project.sh',
+      'infrastructure/scripts/setup-secrets.sh',
+      'wiki/setup-linux-vm.md',
     ];
 
     requiredFiles.forEach(file => {
@@ -202,7 +202,7 @@ class InfrastructureValidator {
   validateGitHubActions() {
     this.log('INFO', 'Validating GitHub Actions workflows...');
 
-    const workflowsDir = path.join(this.projectRoot, '.github', 'workflows');
+    const workflowsDir = path.join(this.projectRoot, 'infrastructure', 'workflows');
 
     if (!fs.existsSync(workflowsDir)) {
       this.log('ERROR', 'GitHub Actions workflows directory missing');
@@ -357,10 +357,10 @@ class InfrastructureValidator {
     } else {
       console.info('\n🔧 Please fix the errors above before deploying.');
       console.info('\n📚 Documentation:');
-      console.info('   - GitHub Secrets: GITHUB_SECRETS_TEMPLATE.md');
+      console.info('   - GitHub Secrets: wiki/GITHUB_SECRETS_TEMPLATE.md');
       console.info('   - Environment Setup: README.md');
       console.info(
-        '   - Server Setup: infrastructure/server/setup-linux-vm.md'
+        '   - Server Setup: wiki/setup-linux-vm.md'
       );
     }
 
