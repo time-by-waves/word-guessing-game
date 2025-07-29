@@ -42,8 +42,8 @@ class InfrastructureValidator {
       'package.json',
       'docker-compose.yml',
       'Dockerfile',
-      'infrastructure/workflows/ci.yml',
-      'infrastructure/workflows/cd.yml',
+      '.github/workflows/ci.yml',
+      '.github/workflows/cd.yml',
       'infrastructure/scripts/setup-project.sh',
       'infrastructure/scripts/setup-secrets.sh',
       'wiki/setup-linux-vm.md',
@@ -202,7 +202,7 @@ class InfrastructureValidator {
   validateGitHubActions() {
     this.log('INFO', 'Validating GitHub Actions workflows...');
 
-    const workflowsDir = path.join(this.projectRoot, 'infrastructure', 'workflows');
+    const workflowsDir = path.join(this.projectRoot, '.github', 'workflows');
 
     if (!fs.existsSync(workflowsDir)) {
       this.log('ERROR', 'GitHub Actions workflows directory missing');

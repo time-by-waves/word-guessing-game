@@ -31,7 +31,7 @@ jobs:
       - name: Check for merge conflict markers
         run: |
           ! grep -r '<<<<<<<\|=======\|>>>>>>>' . \
-            --exclude='infrastructure/workflows/pr.yml' \
+            --exclude='.github/workflows/pr.yml' \
             --exclude-dir=.git
       #####################################################
       - name: Run linter

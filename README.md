@@ -286,11 +286,8 @@ word-guessing-game/
 ├── src/                    # Application source code
 ├── tests/                  # Test suites
 ├── scripts/                # Application scripts
-├── infrastructure/
-│   ├── scripts/            # Infrastructure automation
-│   ├── server/             # Server provisioning files
-│   └── workflows/          # CI/CD pipelines
-├── .github/                # GitHub configuration
+├── infrastructure/         # Infrastructure automation and server files
+├── .github/                # GitHub Actions workflows and config
 ├── .devcontainer/          # Development container config
 ├── docker-compose.yml      # Local development services
 ├── Dockerfile              # Application container
