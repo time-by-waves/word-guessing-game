@@ -9,5 +9,5 @@ This page collects common issues and fixes for the Word Guessing Game infrastruc
 
 ## Local Development
 
-- Verify Docker containers are running with `npm run docker:run`.
+- Verify Docker containers are running with `docker compose up`.
 - Review application logs in `./logs` for runtime errors.
