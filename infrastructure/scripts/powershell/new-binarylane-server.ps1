@@ -257,7 +257,7 @@ Monitoring:
   Server logs: tail -f /var/log/word-guessing-game-setup.log
   Service status: systemctl status word-guessing-game
 
-For troubleshooting, see: infrastructure/server/setup-linux-vm.md
+For troubleshooting, see: wiki/setup-linux-vm.md
 "@
 
   Write-Log $summary

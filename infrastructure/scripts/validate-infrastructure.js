@@ -44,9 +44,9 @@ class InfrastructureValidator {
       'Dockerfile',
       '.github/workflows/ci.yml',
       '.github/workflows/cd.yml',
-      'scripts/setup-project.sh',
-      'scripts/setup-secrets.sh',
-      'infrastructure/server/setup-linux-vm.md',
+      'infrastructure/scripts/setup-project.sh',
+      'infrastructure/scripts/setup-secrets.sh',
+      'wiki/setup-linux-vm.md',
     ];
 
     requiredFiles.forEach(file => {
@@ -357,10 +357,10 @@ class InfrastructureValidator {
     } else {
       console.info('\n🔧 Please fix the errors above before deploying.');
       console.info('\n📚 Documentation:');
-      console.info('   - GitHub Secrets: GITHUB_SECRETS_TEMPLATE.md');
+      console.info('   - GitHub Secrets: wiki/GITHUB_SECRETS_TEMPLATE.md');
       console.info('   - Environment Setup: README.md');
       console.info(
-        '   - Server Setup: infrastructure/server/setup-linux-vm.md'
+        '   - Server Setup: wiki/setup-linux-vm.md'
       );
     }
 
