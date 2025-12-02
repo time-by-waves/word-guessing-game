@@ -17,6 +17,8 @@ coverage/
 test-results/
 playwright-report/
 e2e/test-results/
+junit-results.xml
+test-results.json
 
 # Environment files
 .env
@@ -133,5 +135,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Screenshots from testing
-screenshots/
+# Screenshots from testing (but keep demo screenshots in screenshots/ directory)
+test-results/
+playwright-report/
