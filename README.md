@@ -41,6 +41,9 @@
 A modern, real-time multiplayer word guessing game built with Node.js,
 Express, Socket.IO, and deployed using Infrastructure as Code.
 
+> **📸 [View Demo & Screenshots →](DEMO.md)** - See the game in action
+> with detailed screenshots and comprehensive tech stack documentation!
+
 ## 🎮 Features
 
 - **Real-time Multiplayer**: Connect with friends for live gameplay
