@@ -637,27 +637,44 @@ async function checkAndGrantAchievements(playerId, conditions) {
   // - perfectGame: guesses.filter(g => g.playerId === playerId).length === 0
   // - speedDemon: gameTime < 30
 
+  const achievementMap = {
+    firstWin: 'First Win',
+    speedDemon: 'Speed Demon',
+    perfectGame: 'Perfect Game',
+  };
+
   for (const [condition, achievementName] of Object.entries(
     achievementMap
   )) {
     if (conditions[condition]) {
       // Check if player already has achievement
       const achievements = await Player.getAchievements(playerId);
-      const hasAchievement = achievements.some(
+      const achievement = achievements.find(
         a => a.name === achievementName
       );
 
-      if (!hasAchievement) {
-        // Grant achievement
-        await Player.grantAchievement(playerId, achievementId);
+      if (!achievement) {
+        // Look up achievement ID from database
+        const allAchievements = await query(
+          'SELECT id FROM achievements WHERE name = $1',
+          [achievementName]
+        );
 
-        // Notify player via Socket.IO
-        const socketId = playerSockets.get(playerId);
-        if (socketId) {
-          io.to(socketId).emit('achievementUnlocked', {
-            name: achievementName,
-            description: achievement.description,
-          });
+        if (allAchievements.rows.length > 0) {
+          // Grant achievement
+          await Player.grantAchievement(
+            playerId,
+            allAchievements.rows[0].id
+          );
+
+          // Notify player via Socket.IO
+          const socketId = playerSockets.get(playerId);
+          if (socketId) {
+            io.to(socketId).emit('achievementUnlocked', {
+              name: achievementName,
+              description: `You've unlocked the "${achievementName}" achievement!`,
+            });
+          }
         }
       }
     }
