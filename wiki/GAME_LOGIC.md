@@ -621,8 +621,8 @@ ORDER BY ps.games_won DESC, win_rate DESC
 | Winning Streak   | Win 5 games in a row           | 🔥   | 30     | Track consecutive wins              |
 | Word Master      | Win 100 games total            | 👑   | 100    | `games_won === 100`                 |
 | Social Butterfly | Play with 10 different players | 🦋   | 15     | Track unique co-players             |
-| Night Owl        | Play a game after midnight     | 🦉   | 5      | `hour >= 0 && hour < 6`             |
-| Early Bird       | Play a game before 6 AM        | 🐦   | 5      | `hour >= 0 && hour < 6`             |
+| Night Owl        | Play a game after midnight     | 🦉   | 5      | `hour >= 22 \|\| hour < 6`          |
+| Early Bird       | Play a game before 6 AM        | 🐦   | 5      | `hour >= 4 && hour < 6`             |
 
 ### Achievement Checking Logic
 
