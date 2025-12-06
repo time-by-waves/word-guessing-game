@@ -613,16 +613,16 @@ ORDER BY ps.games_won DESC, win_rate DESC
 
 ### Available Achievements
 
-| Achievement      | Description                    | Icon | Points | Condition                           |
-| ---------------- | ------------------------------ | ---- | ------ | ----------------------------------- |
-| First Win        | Win your first game            | 🏆   | 10     | `games_won === 1`                   |
-| Speed Demon      | Guess word in under 30 seconds | ⚡   | 20     | `gameTime < 30`                     |
-| Perfect Game     | Guess word on first try        | 🎯   | 50     | `guesses.length === 0` (before win) |
-| Winning Streak   | Win 5 games in a row           | 🔥   | 30     | Track consecutive wins              |
-| Word Master      | Win 100 games total            | 👑   | 100    | `games_won === 100`                 |
-| Social Butterfly | Play with 10 different players | 🦋   | 15     | Track unique co-players             |
-| Night Owl        | Play a game after midnight     | 🦉   | 5      | `hour >= 22 \|\| hour < 6`          |
-| Early Bird       | Play a game before 6 AM        | 🐦   | 5      | `hour >= 4 && hour < 6`             |
+| Achievement      | Description                                | Icon | Points | Condition                           |
+| ---------------- | ------------------------------------------ | ---- | ------ | ----------------------------------- | --- | --------- |
+| First Win        | Win your first game                        | 🏆   | 10     | `games_won === 1`                   |
+| Speed Demon      | Guess word in under 30 seconds             | ⚡   | 20     | `gameTime < 30`                     |
+| Perfect Game     | Guess word on first try                    | 🎯   | 50     | `guesses.length === 0` (before win) |
+| Winning Streak   | Win 5 games in a row                       | 🔥   | 30     | Track consecutive wins              |
+| Word Master      | Win 100 games total                        | 👑   | 100    | `games_won === 100`                 |
+| Social Butterfly | Play with 10 different players             | 🦋   | 15     | Track unique co-players             |
+| Night Owl        | Play a game during late night (10 PM-6 AM) | 🦉   | 5      | `hour >= 22                         |     | hour < 6` |
+| Early Bird       | Play a game before 6 AM                    | 🐦   | 5      | `hour >= 4 && hour < 6`             |
 
 ### Achievement Checking Logic
 
