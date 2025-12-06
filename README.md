@@ -329,6 +329,8 @@ npm run docker:clean
 
 ## 📚 Documentation
 
+- **[Game Logic Documentation](wiki/GAME_LOGIC.md)** - Complete guide
+  to game mechanics, architecture, and implementation
 - [GitHub Secrets Setup](wiki/GITHUB_SECRETS_TEMPLATE.md)
 - [GitHub Variables Setup](wiki/GITHUB_VARIABLES_TEMPLATE.md)
 - [Linux VM Setup Guide](wiki/setup-linux-vm.md)
