@@ -359,9 +359,7 @@ class InfrastructureValidator {
       console.info('\n📚 Documentation:');
       console.info('   - GitHub Secrets: wiki/GITHUB_SECRETS_TEMPLATE.md');
       console.info('   - Environment Setup: README.md');
-      console.info(
-        '   - Server Setup: wiki/setup-linux-vm.md'
-      );
+      console.info('   - Server Setup: wiki/setup-linux-vm.md');
     }
 
     console.info('\n' + '='.repeat(50));

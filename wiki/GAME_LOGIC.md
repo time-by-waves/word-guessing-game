@@ -20,17 +20,18 @@
 
 ## Overview
 
-The Word Guessing Game is a **real-time multiplayer word guessing game** where
-players compete to guess a randomly generated target word. The game uses
-**alphabetical comparison** to provide hints to players, telling them whether
-the target word comes before or after their guess in alphabetical order.
+The Word Guessing Game is a **real-time multiplayer word guessing
+game** where players compete to guess a randomly generated target
+word. The game uses **alphabetical comparison** to provide hints to
+players, telling them whether the target word comes before or after
+their guess in alphabetical order.
 
 ### Key Features
 
 - **Real-time multiplayer gameplay** using Socket.IO
 - **Player authentication** with login, registration, and guest mode
-- **Three difficulty levels**: Easy (3-5 letters), Medium (4-8 letters), Hard
-  (7-12 letters)
+- **Three difficulty levels**: Easy (3-5 letters), Medium (4-8
+  letters), Hard (7-12 letters)
 - **Room-based games** with unique 6-character room codes
 - **Persistent player statistics** and achievements
 - **Leaderboard system** tracking wins, win rates, and achievements
@@ -86,6 +87,7 @@ the target word comes before or after their guess in alphabetical order.
 The server maintains two types of game storage:
 
 1. **In-Memory Storage** (Map objects)
+
    - Active games stored in `games` Map
    - Player socket connections in `playerSockets` Map
    - Fast access for real-time gameplay
@@ -105,6 +107,7 @@ The server maintains two types of game storage:
 Players can access the game in three ways:
 
 #### A. Login (Returning Players)
+
 ```
 User enters credentials
     ↓
@@ -118,6 +121,7 @@ Game menu displayed
 ```
 
 #### B. Registration (New Players)
+
 ```
 User provides username, display name, email, password
     ↓
@@ -133,6 +137,7 @@ Game menu displayed
 ```
 
 #### C. Guest Mode
+
 ```
 User chooses guest mode
     ↓
@@ -273,14 +278,17 @@ Game removed from active memory (after timeout)
 **Endpoint**: `POST /api/players/register`
 
 **Required Fields**:
+
 - `username`: Unique identifier (3-50 characters)
 - `password`: Minimum 6 characters
 
 **Optional Fields**:
+
 - `displayName`: Shown to other players (defaults to username)
 - `email`: For account recovery
 
 **Process**:
+
 1. Validate username uniqueness
 2. Hash password using bcrypt (10 salt rounds)
 3. Create player record with UUID
@@ -293,6 +301,7 @@ Game removed from active memory (after timeout)
 **Endpoint**: `POST /api/players/login`
 
 **Process**:
+
 1. Look up player by username
 2. Compare provided password with stored hash using bcrypt
 3. If valid, create session with player ID
@@ -326,16 +335,18 @@ Game removed from active memory (after timeout)
 **Library**: `random-words` (npm package)
 
 **Process**:
+
 ```javascript
 const wordOptions = {
-  exactly: 1,           // Generate 1 word
-  wordsPerString: 1,    // Single word (not compound)
-  minLength: 4,         // Based on difficulty
-  maxLength: 8          // Based on difficulty
+  exactly: 1, // Generate 1 word
+  wordsPerString: 1, // Single word (not compound)
+  minLength: 4, // Based on difficulty
+  maxLength: 8, // Based on difficulty
 };
 ```
 
 **Difficulty Settings**:
+
 - **Easy**: 3-5 letter words (e.g., "cat", "dog", "house")
 - **Medium**: 4-8 letter words (e.g., "computer", "elephant")
 - **Hard**: 7-12 letter words (e.g., "magnificent", "extraordinary")
@@ -343,11 +354,13 @@ const wordOptions = {
 ### Guess Validation
 
 **Client-Side**:
+
 - Only letters (a-z, A-Z) allowed
 - Empty guesses rejected
 - Max length: 20 characters
 
 **Server-Side**:
+
 ```javascript
 // Normalize guess
 const normalizedGuess = guess.toLowerCase().trim();
@@ -376,12 +389,14 @@ if (normalizedGuess < targetWord) {
 ```
 
 **Examples**:
+
 - Target: "elephant"
 - Guess: "apple" → "Target comes AFTER" (e > a)
 - Guess: "zebra" → "Target comes BEFORE" (e < z)
 - Guess: "elephant" → "Correct!"
 
 **Important Notes**:
+
 - Comparison is case-insensitive
 - Uses JavaScript string comparison (Unicode order)
 - All lowercase after normalization
@@ -392,17 +407,21 @@ if (normalizedGuess < targetWord) {
 **Configuration**: `GAME_TIMEOUT_MINUTES` (default: 30)
 
 **Process**:
+
 ```javascript
 // Runs every 5 minutes
-setInterval(async () => {
-  // Find games older than timeout
-  const oldGames = await Game.cleanupOldGames();
-  
-  // For each old game:
-  // 1. Update status to 'ended'
-  // 2. Remove from memory
-  // 3. Notify connected players
-}, 5 * 60 * 1000);
+setInterval(
+  async () => {
+    // Find games older than timeout
+    const oldGames = await Game.cleanupOldGames();
+
+    // For each old game:
+    // 1. Update status to 'ended'
+    // 2. Remove from memory
+    // 3. Notify connected players
+  },
+  5 * 60 * 1000
+);
 ```
 
 ---
@@ -412,6 +431,7 @@ setInterval(async () => {
 ### Room System
 
 **Room Code**:
+
 - 6 characters long
 - Alphanumeric (A-Z, 0-9)
 - Randomly generated
@@ -444,53 +464,59 @@ io.to(roomName).emit('eventName', data);
 ### Real-Time Events
 
 #### Player Joined
+
 ```javascript
 socket.to(`game-${gameId}`).emit('playerJoined', {
   playerId: newPlayer.id,
-  totalPlayers: currentPlayerCount
+  totalPlayers: currentPlayerCount,
 });
 ```
 
 #### New Guess
+
 ```javascript
 io.to(`game-${gameId}`).emit('newGuess', {
   guess: {
     word: normalizedGuess,
     isCorrect: false,
     timestamp: new Date(),
-    playerId: playerId
+    playerId: playerId,
   },
-  playerId: playerId
+  playerId: playerId,
 });
 ```
 
 #### Game Won
+
 ```javascript
 io.to(`game-${gameId}`).emit('gameWon', {
   winner: winnerId,
   targetWord: game.targetWord,
-  totalGuesses: game.guesses.length
+  totalGuesses: game.guesses.length,
 });
 ```
 
 #### Player Left
+
 ```javascript
 socket.to(`game-${gameId}`).emit('playerLeft', {
   playerId: leavingPlayer.id,
-  totalPlayers: remainingPlayerCount
+  totalPlayers: remainingPlayerCount,
 });
 ```
 
 #### Game Timeout
+
 ```javascript
 io.to(`game-${gameId}`).emit('gameTimeout', {
-  message: 'Game has timed out due to inactivity'
+  message: 'Game has timed out due to inactivity',
 });
 ```
 
 ### Connection Management
 
 **Player-Socket Mapping**:
+
 ```javascript
 // Map player ID to socket ID
 playerSockets.set(playerId, socket.id);
@@ -500,6 +526,7 @@ const socketId = playerSockets.get(playerId);
 ```
 
 **Disconnect Handling**:
+
 1. Remove player from socket map
 2. Notify other players in game room
 3. Keep game data (players can rejoin)
@@ -513,22 +540,24 @@ const socketId = playerSockets.get(playerId);
 
 **Tracked Metrics**:
 
-| Metric                    | Description                       | Type    |
-|---------------------------|-----------------------------------|---------|
-| `games_played`            | Total games participated in       | Integer |
-| `games_won`               | Total games won                   | Integer |
-| `total_guesses`           | All guesses across all games      | Integer |
-| `correct_guesses`         | Number of correct guesses (wins)  | Integer |
-| `average_guesses_per_game`| Avg guesses to win                | Decimal |
-| `best_time_seconds`       | Fastest game completion           | Integer |
+| Metric                     | Description                      | Type    |
+| -------------------------- | -------------------------------- | ------- |
+| `games_played`             | Total games participated in      | Integer |
+| `games_won`                | Total games won                  | Integer |
+| `total_guesses`            | All guesses across all games     | Integer |
+| `correct_guesses`          | Number of correct guesses (wins) | Integer |
+| `average_guesses_per_game` | Avg guesses to win               | Decimal |
+| `best_time_seconds`        | Fastest game completion          | Integer |
 
 ### Score Calculation
 
 **Per Game**:
+
 - Correct guess: +100 points (stored in `game_players.score`)
 - Incorrect guesses: No points
 
 **Stats Update on Win**:
+
 ```javascript
 const stats = await Player.getStats(playerId);
 const gameTime = Math.floor((Date.now() - game.startTime) / 1000);
@@ -538,7 +567,10 @@ await Player.updateStats(playerId, {
   gamesWon: stats.games_won + 1,
   totalGuesses: stats.total_guesses + game.guesses.length + 1,
   correctGuesses: stats.correct_guesses + 1,
-  bestTimeSeconds: Math.min(gameTime, stats.best_time_seconds || Infinity)
+  bestTimeSeconds: Math.min(
+    gameTime,
+    stats.best_time_seconds || Infinity
+  ),
 });
 ```
 
@@ -547,6 +579,7 @@ await Player.updateStats(playerId, {
 **Database View**: `leaderboard`
 
 **Calculated Fields**:
+
 ```sql
 SELECT
   p.display_name,
@@ -567,6 +600,7 @@ ORDER BY ps.games_won DESC, win_rate DESC
 ```
 
 **Sorting**:
+
 1. Primary: Games won (descending)
 2. Secondary: Win rate (descending)
 3. Tertiary: Total achievement points (descending)
@@ -579,22 +613,23 @@ ORDER BY ps.games_won DESC, win_rate DESC
 
 ### Available Achievements
 
-| Achievement       | Description                    | Icon | Points | Condition                                |
-|-------------------|--------------------------------|------|--------|------------------------------------------|
-| First Win         | Win your first game            | 🏆   | 10     | `games_won === 1`                        |
-| Speed Demon       | Guess word in under 30 seconds | ⚡   | 20     | `gameTime < 30`                          |
-| Perfect Game      | Guess word on first try        | 🎯   | 50     | `guesses.length === 0` (before win)      |
-| Winning Streak    | Win 5 games in a row           | 🔥   | 30     | Track consecutive wins                   |
-| Word Master       | Win 100 games total            | 👑   | 100    | `games_won === 100`                      |
-| Social Butterfly  | Play with 10 different players | 🦋   | 15     | Track unique co-players                  |
-| Night Owl         | Play a game after midnight     | 🦉   | 5      | `hour >= 0 && hour < 6`                  |
-| Early Bird        | Play a game before 6 AM        | 🐦   | 5      | `hour >= 0 && hour < 6`                  |
+| Achievement      | Description                    | Icon | Points | Condition                           |
+| ---------------- | ------------------------------ | ---- | ------ | ----------------------------------- |
+| First Win        | Win your first game            | 🏆   | 10     | `games_won === 1`                   |
+| Speed Demon      | Guess word in under 30 seconds | ⚡   | 20     | `gameTime < 30`                     |
+| Perfect Game     | Guess word on first try        | 🎯   | 50     | `guesses.length === 0` (before win) |
+| Winning Streak   | Win 5 games in a row           | 🔥   | 30     | Track consecutive wins              |
+| Word Master      | Win 100 games total            | 👑   | 100    | `games_won === 100`                 |
+| Social Butterfly | Play with 10 different players | 🦋   | 15     | Track unique co-players             |
+| Night Owl        | Play a game after midnight     | 🦉   | 5      | `hour >= 0 && hour < 6`             |
+| Early Bird       | Play a game before 6 AM        | 🐦   | 5      | `hour >= 0 && hour < 6`             |
 
 ### Achievement Checking Logic
 
 **Trigger**: After a player wins a game
 
 **Process**:
+
 ```javascript
 async function checkAndGrantAchievements(playerId, conditions) {
   // Conditions passed in:
@@ -602,22 +637,26 @@ async function checkAndGrantAchievements(playerId, conditions) {
   // - perfectGame: guesses.filter(g => g.playerId === playerId).length === 0
   // - speedDemon: gameTime < 30
 
-  for (const [condition, achievementName] of Object.entries(achievementMap)) {
+  for (const [condition, achievementName] of Object.entries(
+    achievementMap
+  )) {
     if (conditions[condition]) {
       // Check if player already has achievement
       const achievements = await Player.getAchievements(playerId);
-      const hasAchievement = achievements.some(a => a.name === achievementName);
-      
+      const hasAchievement = achievements.some(
+        a => a.name === achievementName
+      );
+
       if (!hasAchievement) {
         // Grant achievement
         await Player.grantAchievement(playerId, achievementId);
-        
+
         // Notify player via Socket.IO
         const socketId = playerSockets.get(playerId);
         if (socketId) {
           io.to(socketId).emit('achievementUnlocked', {
             name: achievementName,
-            description: achievement.description
+            description: achievement.description,
           });
         }
       }
@@ -629,10 +668,10 @@ async function checkAndGrantAchievements(playerId, conditions) {
 ### Client-Side Achievement Notification
 
 ```javascript
-socket.on('achievementUnlocked', (data) => {
+socket.on('achievementUnlocked', data => {
   // Display notification with animation
   showAchievementNotification(data.name, data.description);
-  
+
   // Auto-hide after 5 seconds
   setTimeout(hideNotification, 5000);
 });
@@ -657,6 +696,7 @@ CREATE TABLE players (
 ```
 
 **Constraints**:
+
 - `username` must be unique
 - `email` must be unique (if provided)
 - `password_hash` is nullable (for guest conversion)
@@ -678,6 +718,7 @@ CREATE TABLE games (
 ```
 
 **Status Values**:
+
 - `waiting`: Game created, waiting for players
 - `active`: Game in progress
 - `ended`: Game completed or timed out
@@ -699,6 +740,7 @@ CREATE TABLE game_players (
 **Purpose**: Many-to-many relationship between games and players
 
 **Special Fields**:
+
 - `is_host`: TRUE for the player who created the game
 - `is_winner`: TRUE for the player who guessed correctly
 - `score`: Points earned in this game (100 for correct guess)
@@ -734,6 +776,7 @@ CREATE TABLE player_stats (
 ```
 
 **Auto-Calculated**:
+
 - `average_guesses_per_game` = `total_guesses / games_played`
 
 ### Achievements Table
@@ -762,7 +805,8 @@ CREATE TABLE player_achievements (
 );
 ```
 
-**Purpose**: Many-to-many relationship between players and achievements
+**Purpose**: Many-to-many relationship between players and
+achievements
 
 ---
 
@@ -771,6 +815,7 @@ CREATE TABLE player_achievements (
 ### Authentication Endpoints
 
 #### Register
+
 ```
 POST /api/players/register
 Content-Type: application/json
@@ -794,6 +839,7 @@ Response: 200 OK
 ```
 
 #### Login
+
 ```
 POST /api/players/login
 Content-Type: application/json
@@ -815,6 +861,7 @@ Response: 200 OK
 ```
 
 #### Logout
+
 ```
 POST /api/players/logout
 
@@ -827,6 +874,7 @@ Response: 200 OK
 ### Player Endpoints
 
 #### Get Current Player
+
 ```
 GET /api/players/me
 
@@ -839,6 +887,7 @@ Response: 200 OK
 ```
 
 #### Get Player Stats
+
 ```
 GET /api/players/:playerId/stats
 
@@ -856,6 +905,7 @@ Response: 200 OK
 ```
 
 #### Get Leaderboard
+
 ```
 GET /api/leaderboard?limit=10
 
@@ -879,6 +929,7 @@ Response: 200 OK
 ### Game Endpoints
 
 #### Start New Game
+
 ```
 POST /api/game/start
 Content-Type: application/json
@@ -900,6 +951,7 @@ Response: 200 OK
 ```
 
 #### Join Game
+
 ```
 POST /api/game/join
 Content-Type: application/json
@@ -918,6 +970,7 @@ Response: 200 OK
 ```
 
 #### Submit Guess
+
 ```
 POST /api/game/:gameId/guess
 Content-Type: application/json
@@ -944,6 +997,7 @@ Response (Correct): 200 OK
 ```
 
 #### Get Game Status
+
 ```
 GET /api/game/:gameId/status
 
@@ -957,6 +1011,7 @@ Response: 200 OK
 ```
 
 #### Get Active Games
+
 ```
 GET /api/games/active
 
@@ -1005,11 +1060,13 @@ Response: 200 OK
 ### Client → Server
 
 #### Join Game
+
 ```javascript
 socket.emit('joinGame', gameId);
 ```
 
 #### Leave Game
+
 ```javascript
 socket.emit('leaveGame', gameId);
 ```
@@ -1017,48 +1074,58 @@ socket.emit('leaveGame', gameId);
 ### Server → Client
 
 #### Player Joined
+
 ```javascript
-socket.on('playerJoined', (data) => {
+socket.on('playerJoined', data => {
   // data: { playerId, totalPlayers }
-  console.log(`Player ${data.playerId} joined. Total: ${data.totalPlayers}`);
+  console.log(
+    `Player ${data.playerId} joined. Total: ${data.totalPlayers}`
+  );
 });
 ```
 
 #### Player Left
+
 ```javascript
-socket.on('playerLeft', (data) => {
+socket.on('playerLeft', data => {
   // data: { playerId, totalPlayers }
-  console.log(`Player ${data.playerId} left. Remaining: ${data.totalPlayers}`);
+  console.log(
+    `Player ${data.playerId} left. Remaining: ${data.totalPlayers}`
+  );
 });
 ```
 
 #### New Guess
+
 ```javascript
-socket.on('newGuess', (data) => {
+socket.on('newGuess', data => {
   // data: { guess: { word, isCorrect, timestamp, playerId }, playerId }
   updateGuessHistory(data.guess);
 });
 ```
 
 #### Game Won
+
 ```javascript
-socket.on('gameWon', (data) => {
+socket.on('gameWon', data => {
   // data: { winner, targetWord, totalGuesses }
   displayWinner(data.winner, data.targetWord);
 });
 ```
 
 #### Achievement Unlocked
+
 ```javascript
-socket.on('achievementUnlocked', (data) => {
+socket.on('achievementUnlocked', data => {
   // data: { name, description }
   showAchievementNotification(data);
 });
 ```
 
 #### Game Timeout
+
 ```javascript
-socket.on('gameTimeout', (data) => {
+socket.on('gameTimeout', data => {
   // data: { message }
   alert(data.message);
   returnToMenu();
@@ -1121,17 +1188,17 @@ socket.on('gameTimeout', (data) => {
 
 ### State Transitions
 
-| From State      | Event              | To State    | Actions                                    |
-|-----------------|--------------------|--------------|--------------------------------------------|
-| No Session      | Login/Register     | Authenticated| Create session, load player data           |
-| No Session      | Guest Mode         | Authenticated| Create guest session                       |
-| Authenticated   | Create Game        | Waiting      | Generate word, create game, show room code |
-| Authenticated   | Join Game          | Joining      | Validate room code, add player             |
-| Waiting/Joining | All Players Ready  | Active       | Update game status, enable guessing        |
-| Active          | Correct Guess      | Ended        | Update stats, check achievements, notify   |
-| Active          | Timeout            | Ended        | Update status, notify players              |
-| Active          | Leave Game         | Game Menu    | Remove from room, notify others            |
-| Ended           | View Results       | Game Menu    | Display stats, return to menu              |
+| From State      | Event             | To State      | Actions                                    |
+| --------------- | ----------------- | ------------- | ------------------------------------------ |
+| No Session      | Login/Register    | Authenticated | Create session, load player data           |
+| No Session      | Guest Mode        | Authenticated | Create guest session                       |
+| Authenticated   | Create Game       | Waiting       | Generate word, create game, show room code |
+| Authenticated   | Join Game         | Joining       | Validate room code, add player             |
+| Waiting/Joining | All Players Ready | Active        | Update game status, enable guessing        |
+| Active          | Correct Guess     | Ended         | Update stats, check achievements, notify   |
+| Active          | Timeout           | Ended         | Update status, notify players              |
+| Active          | Leave Game        | Game Menu     | Remove from room, notify others            |
+| Ended           | View Results      | Game Menu     | Display stats, return to menu              |
 
 ---
 
@@ -1140,21 +1207,25 @@ socket.on('gameTimeout', (data) => {
 ### Input Validation
 
 #### Username
+
 - **Length**: 3-50 characters
 - **Format**: Alphanumeric, underscore, hyphen
 - **Uniqueness**: Checked against database
 
 #### Password
+
 - **Minimum Length**: 6 characters (configurable)
 - **Hashing**: bcrypt with 10 salt rounds
 - **Storage**: Only hash stored, never plaintext
 
 #### Guess
+
 - **Format**: Letters only (a-z, A-Z)
 - **Length**: 1-20 characters
 - **Processing**: Normalized to lowercase
 
 #### Room Code
+
 - **Format**: 6 alphanumeric characters (A-Z, 0-9)
 - **Case**: Converted to uppercase
 - **Uniqueness**: Ensured on generation
@@ -1162,11 +1233,12 @@ socket.on('gameTimeout', (data) => {
 ### Rate Limiting
 
 **Configuration**:
+
 ```javascript
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 100,                   // 100 requests per window
-  message: 'Too many requests from this IP, please try again later.'
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  message: 'Too many requests from this IP, please try again later.',
 });
 
 app.use('/api/', limiter);
@@ -1191,10 +1263,11 @@ app.use('/api/', limiter);
 
 ```javascript
 cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL
-    : 'http://localhost:3000',
-  credentials: true
+  origin:
+    process.env.NODE_ENV === 'production'
+      ? process.env.FRONTEND_URL
+      : 'http://localhost:3000',
+  credentials: true,
 });
 ```
 
@@ -1205,6 +1278,7 @@ app.use(helmet());
 ```
 
 Enables:
+
 - Content Security Policy
 - X-Frame-Options
 - X-Content-Type-Options
@@ -1218,12 +1292,14 @@ Enables:
 ### Complete Game Walkthrough
 
 1. **Player A creates a game**
+
    - Selects "Medium" difficulty
    - Server generates word: "computer"
    - Room code: `GAME42`
    - Word length hint shown: 8 letters
 
 2. **Player B joins the game**
+
    - Enters room code: `GAME42`
    - Joins game room
    - Player A notified of Player B joining
@@ -1231,25 +1307,30 @@ Enables:
 3. **Players start guessing**
 
    **Player A's Turn**:
+
    - Guesses: "elephant" (9 letters)
    - Hint: "Target comes BEFORE your guess" (c < e)
    - Saved to database and broadcast
 
    **Player B's Turn**:
+
    - Guesses: "apple" (5 letters)
    - Hint: "Target comes AFTER your guess" (c > a)
    - Saved and broadcast
 
    **Player A's Turn**:
+
    - Guesses: "building" (8 letters)
    - Hint: "Target comes AFTER your guess" (c > b)
    - Saved and broadcast
 
    **Player B's Turn**:
+
    - Guesses: "computer" (8 letters)
    - ✅ **CORRECT!**
 
 4. **Game ends**
+
    - Game status: `ended`
    - Player B marked as winner
    - Player B's stats updated:
@@ -1263,6 +1344,7 @@ Enables:
      - Speed Demon? (Check game time)
 
 5. **Players see results**
+
    - Winner: Player B
    - Target word revealed: "computer"
    - Total guesses: 4 (2 from each player)
@@ -1328,6 +1410,7 @@ LOG_LEVEL=info|debug|error
 ### Database Optimization
 
 - **Indexes**: Created on frequently queried columns
+
   - `games.room_code`
   - `games.status`
   - `guesses.game_id`
@@ -1350,6 +1433,7 @@ LOG_LEVEL=info|debug|error
 **Current**: Single-server deployment
 
 **Future Improvements**:
+
 - Redis Pub/Sub for multi-server Socket.IO
 - Database read replicas for leaderboard
 - CDN for static assets
@@ -1364,6 +1448,7 @@ LOG_LEVEL=info|debug|error
 Located in: `/tests/unit/`
 
 **Coverage**:
+
 - Player model (CRUD operations)
 - Game model (game lifecycle)
 - Authentication logic
@@ -1374,6 +1459,7 @@ Located in: `/tests/unit/`
 Located in: `/tests/e2e/`
 
 **Test Scenarios**:
+
 - Complete game flow
 - Multiple players
 - Edge cases (timeouts, disconnections)
@@ -1403,15 +1489,18 @@ npm run test:e2e
 ### Common Issues
 
 1. **"Game not found"**
+
    - Room code may be incorrect (case-sensitive)
    - Game may have ended or timed out
    - Check active games: `GET /api/games/active`
 
 2. **"Game is full"**
+
    - Maximum players reached
    - Ask host to increase `maxPlayers` or wait
 
 3. **Socket.IO connection issues**
+
    - Check CORS configuration
    - Verify WebSocket ports not blocked
    - Check client socket.io library version matches server
@@ -1463,15 +1552,18 @@ tail -f error.log
 
 ## Conclusion
 
-This document provides a comprehensive overview of the Word Guessing Game's
-logic, architecture, and implementation. The game combines real-time
-multiplayer features with persistent player progression, creating an engaging
-and competitive word-guessing experience.
+This document provides a comprehensive overview of the Word Guessing
+Game's logic, architecture, and implementation. The game combines
+real-time multiplayer features with persistent player progression,
+creating an engaging and competitive word-guessing experience.
 
 For additional documentation, see:
+
 - [README.md](../README.md) - Setup and deployment
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
-- [GitHub Secrets Setup](GITHUB_SECRETS_TEMPLATE.md) - CI/CD configuration
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and
+  solutions
+- [GitHub Secrets Setup](GITHUB_SECRETS_TEMPLATE.md) - CI/CD
+  configuration
 
 ---
 
